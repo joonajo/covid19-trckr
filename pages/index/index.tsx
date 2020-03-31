@@ -5,13 +5,14 @@ import { ThrowReporter } from 'io-ts/lib/ThrowReporter'
 import { NextPage } from 'next'
 import styled from 'styled-components'
 import CountryInfo from '../../components/CountryInfo'
-import { Title, FlexColumnCenterDiv } from '../../components/CommonComponents'
+import { Title, FlexColumnCenterDiv, FlexRowCenterDiv } from '../../components/CommonComponents'
 
 const AppWrapper = styled(FlexColumnCenterDiv)`
     position: relative;
     justify-content: flex-start;
     width: 100vw;
     height: 100vh;
+    overflow-x: hidden;
 `
 
 const AppTitle = styled(Title)`
@@ -19,8 +20,16 @@ const AppTitle = styled(Title)`
     width: 100%;
     text-align: right;
     color: royalblue;
-    letter-spacing: 5px;
     font-size: 5rem;
+    font-weight: bold;
+`
+
+const ContentWrapper = styled(FlexRowCenterDiv)`
+    flex-flow: row wrap;
+`
+
+const ErrorText = styled.h2`
+    color: crimson;
 `
 
 export const DateData = t.type({
@@ -31,7 +40,7 @@ export const DateData = t.type({
 })
 
 export const CountryData = t.type({
-    country: t.string,
+    name: t.string,
     dates: t.array(DateData)
 })
 
@@ -47,7 +56,7 @@ export type TRawData = {
 const reformatResponseData = (data: TRawData): TFormattedData => {
     const formattedData: TFormattedData = Object.keys(data).map((key: string) => {
         return {
-            country: key,
+            name: key,
             dates: data[key]
         }
     }) 
@@ -77,10 +86,12 @@ const App: NextPage = (): JSX.Element => {
     return (
         <AppWrapper >
             <AppTitle>COVID-19 TRCKR</AppTitle>
-            { !!data && data.map((countryData: TCountryData) => {
-
-            })}
-            { !!error && <p>error</p>}
+            <ContentWrapper>
+                { !!data && data.map((country: TCountryData) => (
+                    <CountryInfo key={country.name} {...country}  />
+                ))}
+                { !!error && <ErrorText>error</ErrorText> }
+            </ContentWrapper>
         </AppWrapper>
     )
 }

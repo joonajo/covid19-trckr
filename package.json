@@ -15,7 +15,7 @@
     "@types/styled-components": "^5.0.1",
     "fp-ts": "^2.5.3",
     "io-ts": "^2.1.2",
-    "next": "^9.3.2",
+    "next": "^9.3.3",
     "next-compose-plugins": "^2.2.0",
     "next-offline": "^4.0.6",
     "next-optimized-images": "^2.5.4",

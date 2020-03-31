@@ -4,57 +4,83 @@ import { ThrowReporter } from 'io-ts/lib/ThrowReporter'
 
 import { NextPage } from 'next'
 import styled from 'styled-components'
+import CountryInfo from '../../components/CountryInfo'
+import { Title, FlexColumnCenterDiv } from '../../components/CommonComponents'
 
-const AppWrapper = styled.div`
-    display: flex;
-    flex-flow: column;
-    justify-content: center;
-    align-items: center;
+const AppWrapper = styled(FlexColumnCenterDiv)`
     position: relative;
+    justify-content: flex-start;
     width: 100vw;
     height: 100vh;
 `
 
-const Title = styled.h1`
-    font-weight: normal;
+const AppTitle = styled(Title)`
+    padding: 20px;
+    width: 100%;
+    text-align: right;
+    color: royalblue;
+    letter-spacing: 5px;
+    font-size: 5rem;
 `
 
-const Text = styled.p`   
-`
-
-const Data = t.type({
+export const DateData = t.type({
     date: t.string,
     confirmed: t.number,        
     deaths: t.number,
     recovered: t.number
 })
 
-const ResponseData = t.type({
-    Finland: t.array(Data),
-    Sweden: t.array(Data),
-    Italy: t.array(Data),
-    Spain: t.array(Data),
+export const CountryData = t.type({
+    country: t.string,
+    dates: t.array(DateData)
 })
 
+export const FormattedData = t.array(CountryData)
+
+export type TDateData = t.TypeOf<typeof DateData>
+export type TCountryData = t.TypeOf<typeof CountryData>
+export type TFormattedData = t.TypeOf<typeof FormattedData>
+export type TRawData = {
+    [country: string]: TDateData[]
+}
+
+const reformatResponseData = (data: TRawData): TFormattedData => {
+    const formattedData: TFormattedData = Object.keys(data).map((key: string) => {
+        return {
+            country: key,
+            dates: data[key]
+        }
+    }) 
+    return formattedData
+}
+
 const App: NextPage = (): JSX.Element => {
-    const [countries, setCountries] = React.useState(null)
+    const [data, setData] = React.useState<TFormattedData>()
+    const [error, setError] = React.useState<boolean>(false)
 
     React.useEffect(() => {
         document.title = "COVID-19 Trckr"
 
         fetch("https://pomber.github.io/covid19/timeseries.json")
             .then(response => response.json())
-            .then(data => {
-                const result = ResponseData.decode(data)
-                ThrowReporter.report(result)
-                setCountries(data)
+            .then((data: TRawData) => reformatResponseData(data))
+            .then((formattedData: TFormattedData) => {
+                const result = FormattedData.decode(formattedData)
+                if (result._tag === 'Right') {
+                    setData(formattedData)
+                } else {
+                    setError(true)
+                }
             }).catch(e => console.log(e))
     }, [])
 
     return (
         <AppWrapper >
-            <Title>Hello!</Title>
-            <Text>NextJS x React x TypeScript x Styled-components</Text>
+            <AppTitle>COVID-19 TRCKR</AppTitle>
+            { !!data && data.map((countryData: TCountryData) => {
+
+            })}
+            { !!error && <p>error</p>}
         </AppWrapper>
     )
 }

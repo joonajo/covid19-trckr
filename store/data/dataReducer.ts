@@ -1,9 +1,10 @@
-import { TFormattedData, TCountryData } from "../../pages/index"
 import { TActions, actionTypes } from "../actionTypes"
+import { TFormattedData, TCountryData, TTotals } from "../../types/types"
 
 export type TDataState = {
     fullData?: TFormattedData
     filteredData?: TFormattedData
+    totals?: TTotals
     nameFilter: string
 }
 
@@ -48,6 +49,9 @@ export const dataReducer = (state: TDataState = defaultDataState, action: TActio
     
         case actionTypes.SET_NAME_FILTER:
             return filterByName(state, action)
+
+        case actionTypes.SET_TOTALS_ALL:
+            return { ...state, totals: action.payload }
 
         default:
             return { ...state }

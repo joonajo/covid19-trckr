@@ -1,8 +1,8 @@
 import * as React from 'react'
 import styled from 'styled-components'
-import { TDateData, TCountryData } from '../pages/index/index'
 import { FlexColumnCenterDiv, FlexRowCenterDiv } from './CommonComponents'
 import { fadein } from '../keyframes/keyframes'
+import { TCountryData, TDateData } from '../types/types'
 
 const Wrapper = styled(FlexColumnCenterDiv)`
     margin: 10px;
@@ -86,7 +86,7 @@ type TDataCardProps = {
     color?: string
 }
 
-const DataCard: React.FunctionComponent<TDataCardProps> = (props): JSX.Element => {
+export const DataCard: React.FunctionComponent<TDataCardProps> = (props): JSX.Element => {
     const { title, color = 'navy', text }: TDataCardProps = props
     return (
         <DataCardWrapper>

@@ -1,15 +1,16 @@
 import React from 'react'
-import * as t from 'io-ts'
 import { connect, ConnectedProps } from 'react-redux'
 
 import { NextPage } from 'next'
 import styled from 'styled-components'
-import CountryCard from '../../components/CountryCard'
+import CountryCard, { DataCard } from '../../components/CountryCard'
 import { FlexColumnCenterDiv } from '../../components/CommonComponents'
 import Loading from '../../components/Loading/Loading'
 import SidePanel from '../../components/Filters/SidePanel'
 import { TReduxState, TReduxDispatch } from '../../store/store'
 import actionCreators from '../../store/actionCreators'
+import { reformatResponseData, getTotals } from '../../utils/utils'
+import { TFormattedData, TRawData, FormattedData, TCountryData, TTotals } from '../../types/types'
 
 const AppWrapper = styled(FlexColumnCenterDiv)`
     position: relative;
@@ -38,44 +39,15 @@ const ErrorText = styled.h2`
     color: crimson;
 `
 
-export const DateData = t.type({
-    date: t.string,
-    confirmed: t.number,        
-    deaths: t.number,
-    recovered: t.number
-})
-
-export const CountryData = t.type({
-    name: t.string,
-    dates: t.array(DateData)
-})
-
-export const FormattedData = t.array(CountryData)
-
-export type TDateData = t.TypeOf<typeof DateData>
-export type TCountryData = t.TypeOf<typeof CountryData>
-export type TFormattedData = t.TypeOf<typeof FormattedData>
-export type TRawData = {
-    [country: string]: TDateData[]
-}
-
-const reformatResponseData = (data: TRawData): TFormattedData => {
-    const formattedData: TFormattedData = Object.keys(data).map((key: string) => {
-        return {
-            name: key,
-            dates: data[key]
-        }
-    }) 
-    return formattedData
-}
-
 const mapStateToProps = (state: TReduxState) => ({
     fullData: state.data.fullData,
-    filteredData: state.data.filteredData
+    filteredData: state.data.filteredData,
+    totals: state.data.totals,
 })
 
 const mapDispatchToProps = (dispatch: TReduxDispatch) => ({
-    setData: (data: TFormattedData) => dispatch(actionCreators.setData(data))
+    setData: (data: TFormattedData) => dispatch(actionCreators.setData(data)),
+    setTotalsAll: (totals: TTotals) => dispatch(actionCreators.setTotalsAll(totals))
 })
 
 const connector = connect(mapStateToProps, mapDispatchToProps)
@@ -84,7 +56,7 @@ type TReduxProps = ConnectedProps<typeof connector>
 type TAppProps = TReduxProps & {}
 
 const App: NextPage<TAppProps> = (props): JSX.Element => {
-    const { filteredData, setData }: TAppProps = props
+    const { filteredData, totals, setData, setTotalsAll }: TAppProps = props
     const [error, setError] = React.useState<boolean>(false)
 
     React.useEffect(() => {
@@ -97,19 +69,23 @@ const App: NextPage<TAppProps> = (props): JSX.Element => {
                 const result = FormattedData.decode(formattedData)
                 if (result._tag === 'Right') {
                     setData(formattedData)
+                    setTotalsAll(getTotals(formattedData))
                 } else {
                     setError(true)
                 }
             }).catch(e => console.log(e))
     }, [setData])
 
+    console.log(totals)
+
     return (
         <AppWrapper >
-            <Loading show={!filteredData} text spinner slideout fullscreen  />
-            { !!filteredData && 
+            <Loading show={!filteredData || !totals} text spinner slideout fullscreen  />
+            { !!filteredData && !!totals && 
                 <ContentWrapper flex='column'>
                     <AppTitle>COVID-19 TRCKR</AppTitle>
                     <SidePanel />
+                    <DataTotals {...totals} />
                     <ContentWrapper flex='row wrap'>
                         { filteredData.map((country: TCountryData) => (
                             <CountryCard key={country.name} {...country}  />
@@ -119,6 +95,58 @@ const App: NextPage<TAppProps> = (props): JSX.Element => {
                 </ContentWrapper>
             }
         </AppWrapper>
+    )
+}
+
+const TotalsTitle = styled.h3`
+    color: black;
+    font-weight: normal;
+    text-transform: uppercase;
+    font-family: 'Roboto Mono';
+`
+
+const TotalsWrapper = styled(ContentWrapper)`
+    padding: 20px;
+`
+
+const DataCardWrapper = styled(FlexColumnCenterDiv)`
+    padding: 10px;
+    margin: 10px;
+    background: whitesmoke;
+`
+
+const DataCardTitle = styled.p`
+    text-transform: uppercase;
+    font-size: 1rem;
+    color: black;
+    padding: 5px;
+`
+
+const DataCardText = styled.h2<{ color: string }>`
+    color: ${props => `${props.color}`};
+    font-weight: bold;
+    font-family: 'Roboto';
+`
+
+type TDataTotalsProps = TTotals & {
+
+}
+
+const DataTotals: React.FunctionComponent<TDataTotalsProps> = (props): JSX.Element => {
+    const { confirmed, deaths }: TDataTotalsProps = props
+
+    return (
+        <TotalsWrapper flex='row'>
+            <TotalsTitle>Globally</TotalsTitle>
+            <DataCardWrapper>
+                <DataCardTitle>cases</DataCardTitle>
+                <DataCardText color='navy'>{confirmed}</DataCardText>
+            </DataCardWrapper>
+            <DataCardWrapper>
+                <DataCardTitle>deaths</DataCardTitle>
+                <DataCardText color='crimson'>{deaths}</DataCardText>
+            </DataCardWrapper>
+        </TotalsWrapper>
     )
 }
 

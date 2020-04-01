@@ -13,11 +13,3 @@ export const FlexColumnCenterDiv = styled.div`
     justify-content: center;
     align-items: center;
 `
-
-export const Title = styled.h1`
-    font-weight: normal;
-    cursor: default;
-`
-
-export const Text = styled.p`   
-`

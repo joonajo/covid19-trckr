@@ -1,29 +1,31 @@
 import * as React from 'react'
 import styled from 'styled-components'
 import { TDateData, TCountryData } from '../pages/index/index'
-import { FlexColumnCenterDiv, FlexRowCenterDiv, Title, Text } from './CommonComponents'
+import { FlexColumnCenterDiv, FlexRowCenterDiv } from './CommonComponents'
+import { fadein } from '../keyframes/keyframes'
 
 const Wrapper = styled(FlexColumnCenterDiv)`
-    margin: 5px auto;
-    justify-content: space-between;
-    align-items: flex-start;
-    width: 300px;
-    height: 150px;
+    margin: 10px;
     padding: 5px 10px;
+    justify-content: space-between;
+    width: 200px;
+    min-height: 100px;
+    align-items: flex-start;
     background: white;
     box-shadow: 0 0 20px 0 gainsboro;
     cursor: default;
     font-family: 'Roboto Mono';
+    animation: ${fadein} 1s;
 `
 
-const Name = styled.h2`
-    color: navy;
+const Name = styled.h3`
+    color: black;
+    font-weight: normal;
     text-transform: uppercase;
 `
 
 const Data = styled(FlexRowCenterDiv)`
     width: 100%;
-    justify-content: space-between;
 `
 
 type TCountryInfoProps = TCountryData & {
@@ -44,11 +46,11 @@ const CountryInfo: React.FunctionComponent<TCountryInfoProps> = (props): JSX.Ele
             </Name>
             <Data>
                 <DataCard
-                    title='confirmed'
+                    title='cases'
                     text={data.confirmed}
                 />
                 <DataCard
-                    title='fatalities'
+                    title='deaths'
                     text={data.deaths}
                 />
             </Data>
@@ -57,17 +59,20 @@ const CountryInfo: React.FunctionComponent<TCountryInfoProps> = (props): JSX.Ele
 }
 
 const DataCardWrapper = styled(FlexColumnCenterDiv)`
+    padding: 5px;
+    margin: 5px;
+    background: whitesmoke;
 `
 
-const DataCardTitle = styled.h3`
+const DataCardTitle = styled.p`
     text-transform: uppercase;
-    font-size: .7rem;
+    font-size: .5rem;
     color: black;
     padding: 5px;
 `
 
 const DataCardText = styled.p`
-    font-size: 1.3rem;
+    font-size: .8rem;
     color: crimson;
     font-weight: bold;
 `

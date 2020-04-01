@@ -1,11 +1,11 @@
 import React from 'react'
 import * as t from 'io-ts'
-import { ThrowReporter } from 'io-ts/lib/ThrowReporter'
 
 import { NextPage } from 'next'
 import styled from 'styled-components'
 import CountryInfo from '../../components/CountryInfo'
-import { Title, FlexColumnCenterDiv, FlexRowCenterDiv } from '../../components/CommonComponents'
+import { FlexColumnCenterDiv, FlexRowCenterDiv } from '../../components/CommonComponents'
+import Loading from '../../components/Loading/Loading'
 
 const AppWrapper = styled(FlexColumnCenterDiv)`
     position: relative;
@@ -15,7 +15,7 @@ const AppWrapper = styled(FlexColumnCenterDiv)`
     overflow-x: hidden;
 `
 
-const AppTitle = styled(Title)`
+const AppTitle = styled.h1`
     padding: 20px;
     width: 100%;
     text-align: right;
@@ -85,6 +85,7 @@ const App: NextPage = (): JSX.Element => {
 
     return (
         <AppWrapper >
+            <Loading show={!data} text spinner slideout fullscreen  />
             <AppTitle>COVID-19 TRCKR</AppTitle>
             <ContentWrapper>
                 { !!data && data.map((country: TCountryData) => (

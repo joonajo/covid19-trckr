@@ -3,9 +3,10 @@ import * as t from 'io-ts'
 
 import { NextPage } from 'next'
 import styled from 'styled-components'
-import CountryInfo from '../../components/CountryInfo'
-import { FlexColumnCenterDiv, FlexRowCenterDiv } from '../../components/CommonComponents'
+import CountryCard from '../../components/CountryCard'
+import { FlexColumnCenterDiv } from '../../components/CommonComponents'
 import Loading from '../../components/Loading/Loading'
+import SidePanel from '../../components/Filters/SidePanel'
 
 const AppWrapper = styled(FlexColumnCenterDiv)`
     position: relative;
@@ -22,10 +23,11 @@ const AppTitle = styled.h1`
     color: royalblue;
     font-size: 5rem;
     font-weight: bold;
+    cursor: default;
 `
 
-const ContentWrapper = styled(FlexRowCenterDiv)`
-    flex-flow: row wrap;
+const ContentWrapper = styled(FlexColumnCenterDiv)<{ flex: string }>`
+    flex-flow: ${props => `${props.flex}` };
 `
 
 const ErrorText = styled.h2`
@@ -86,13 +88,18 @@ const App: NextPage = (): JSX.Element => {
     return (
         <AppWrapper >
             <Loading show={!data} text spinner slideout fullscreen  />
-            <AppTitle>COVID-19 TRCKR</AppTitle>
-            <ContentWrapper>
-                { !!data && data.map((country: TCountryData) => (
-                    <CountryInfo key={country.name} {...country}  />
-                ))}
-                { !!error && <ErrorText>error</ErrorText> }
-            </ContentWrapper>
+            { !!data && 
+                <ContentWrapper flex='column'>
+                    <AppTitle>COVID-19 TRCKR</AppTitle>
+                    <SidePanel />
+                    <ContentWrapper flex='row wrap'>
+                        { data.map((country: TCountryData) => (
+                            <CountryCard key={country.name} {...country}  />
+                        ))}
+                        { !!error && <ErrorText>error</ErrorText> }
+                    </ContentWrapper>
+                </ContentWrapper>
+            }
         </AppWrapper>
     )
 }

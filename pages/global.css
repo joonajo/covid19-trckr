@@ -1,4 +1,7 @@
-  
+:root {
+    --transition-time: .2s;
+}
+
 html {
     scroll-behavior: smooth;
 }

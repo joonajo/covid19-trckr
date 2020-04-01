@@ -28,12 +28,12 @@ const Data = styled(FlexRowCenterDiv)`
     width: 100%;
 `
 
-type TCountryInfoProps = TCountryData & {
+type TCountryCardProps = TCountryData & {
 
 }
 
-const CountryInfo: React.FunctionComponent<TCountryInfoProps> = (props): JSX.Element => {   
-    const { name, dates }: TCountryInfoProps = props
+const CountryCard: React.FunctionComponent<TCountryCardProps> = (props): JSX.Element => {   
+    const { name, dates }: TCountryCardProps = props
 
     const [data, setData] = React.useState<TDateData>(
         dates[dates.length - 1]
@@ -51,6 +51,7 @@ const CountryInfo: React.FunctionComponent<TCountryInfoProps> = (props): JSX.Ele
                 />
                 <DataCard
                     title='deaths'
+                    color='crimson'
                     text={data.deaths}
                 />
             </Data>
@@ -71,24 +72,26 @@ const DataCardTitle = styled.p`
     padding: 5px;
 `
 
-const DataCardText = styled.p`
+const DataCardText = styled.p<{ color: string }>`
     font-size: .8rem;
-    color: crimson;
+    color: ${props => `${props.color}`};
     font-weight: bold;
 `
 
 type TDataCardProps = {
     title: string
     text: string | number
+    color?: string
 }
 
 const DataCard: React.FunctionComponent<TDataCardProps> = (props): JSX.Element => {
+    const { title, color = 'navy', text }: TDataCardProps = props
     return (
         <DataCardWrapper>
-            <DataCardTitle>{props.title}</DataCardTitle>
-            <DataCardText>{props.text}</DataCardText>
+            <DataCardTitle>{title}</DataCardTitle>
+            <DataCardText color={color}>{text}</DataCardText>
         </DataCardWrapper>
     )
 } 
 
-export default CountryInfo
+export default CountryCard

@@ -1,7 +1,9 @@
 import React from 'react'
+import { Provider } from 'react-redux'
 
 import App from 'next/app'
 import './global.css'
+import store from '../store/store'
 
 class MyApp extends App {
   // Only uncomment this method if you have blocking data requirements for
@@ -32,7 +34,9 @@ class MyApp extends App {
   render() {
     const { Component, pageProps } = this.props
     return (
-      <Component {...pageProps} />
+      <Provider store={store}>
+        <Component {...pageProps} />
+      </Provider>
     )
   }
 }

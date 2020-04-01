@@ -1,5 +1,6 @@
 import React from 'react'
 import * as t from 'io-ts'
+import { connect, ConnectedProps } from 'react-redux'
 
 import { NextPage } from 'next'
 import styled from 'styled-components'
@@ -7,6 +8,8 @@ import CountryCard from '../../components/CountryCard'
 import { FlexColumnCenterDiv } from '../../components/CommonComponents'
 import Loading from '../../components/Loading/Loading'
 import SidePanel from '../../components/Filters/SidePanel'
+import { TReduxState, TReduxDispatch } from '../../store/store'
+import actionCreators from '../../store/actionCreators'
 
 const AppWrapper = styled(FlexColumnCenterDiv)`
     position: relative;
@@ -27,6 +30,7 @@ const AppTitle = styled.h1`
 `
 
 const ContentWrapper = styled(FlexColumnCenterDiv)<{ flex: string }>`
+    width: 100%;
     flex-flow: ${props => `${props.flex}` };
 `
 
@@ -65,8 +69,22 @@ const reformatResponseData = (data: TRawData): TFormattedData => {
     return formattedData
 }
 
-const App: NextPage = (): JSX.Element => {
-    const [data, setData] = React.useState<TFormattedData>()
+const mapStateToProps = (state: TReduxState) => ({
+    fullData: state.data.fullData,
+    filteredData: state.data.filteredData
+})
+
+const mapDispatchToProps = (dispatch: TReduxDispatch) => ({
+    setData: (data: TFormattedData) => dispatch(actionCreators.setData(data))
+})
+
+const connector = connect(mapStateToProps, mapDispatchToProps)
+type TReduxProps = ConnectedProps<typeof connector>
+
+type TAppProps = TReduxProps & {}
+
+const App: NextPage<TAppProps> = (props): JSX.Element => {
+    const { filteredData, setData }: TAppProps = props
     const [error, setError] = React.useState<boolean>(false)
 
     React.useEffect(() => {
@@ -83,17 +101,17 @@ const App: NextPage = (): JSX.Element => {
                     setError(true)
                 }
             }).catch(e => console.log(e))
-    }, [])
+    }, [setData])
 
     return (
         <AppWrapper >
-            <Loading show={!data} text spinner slideout fullscreen  />
-            { !!data && 
+            <Loading show={!filteredData} text spinner slideout fullscreen  />
+            { !!filteredData && 
                 <ContentWrapper flex='column'>
                     <AppTitle>COVID-19 TRCKR</AppTitle>
                     <SidePanel />
                     <ContentWrapper flex='row wrap'>
-                        { data.map((country: TCountryData) => (
+                        { filteredData.map((country: TCountryData) => (
                             <CountryCard key={country.name} {...country}  />
                         ))}
                         { !!error && <ErrorText>error</ErrorText> }
@@ -104,4 +122,4 @@ const App: NextPage = (): JSX.Element => {
     )
 }
 
-export default App
+export default connector(App)

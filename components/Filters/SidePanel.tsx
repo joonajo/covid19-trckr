@@ -1,8 +1,13 @@
 import * as React from 'react'
 import styled from 'styled-components'
-import { FlexColumnCenterDiv } from '../CommonComponents'
+import { connect, ConnectedProps } from 'react-redux'
+
 import { fadein } from '../../keyframes/keyframes'
+import { FlexColumnCenterDiv } from '../CommonComponents'
 import Toggle from './Toggle'
+
+import { TReduxState, TReduxDispatch } from '../../store/store'
+import actionCreators from '../../store/actionCreators'
 
 const Wrapper = styled(FlexColumnCenterDiv)<{ open: boolean }>`
     --panel-width: 300px;
@@ -28,8 +33,22 @@ const FilterTitle = styled.p`
     margin: 10px 0;
 `
 
+const mapStateToProps = (state: TReduxState) => ({
+    nameFilter: state.data.nameFilter
+})
 
-const SidePanel: React.FunctionComponent = (): JSX.Element => {
+const mapDispatchToProps = (dispatch: TReduxDispatch) => ({
+    setNameFilter: (name: string) => dispatch(actionCreators.setNameFilter(name))
+})
+
+const connector = connect(mapStateToProps, mapDispatchToProps)
+type TReduxProps = ConnectedProps<typeof connector>
+
+type TSidePanelProps = TReduxProps & {}
+
+const SidePanel: React.FunctionComponent<TSidePanelProps> = (props): JSX.Element => {
+    const { nameFilter, setNameFilter }: TSidePanelProps = props
+    
     const [open, setOpen] = React.useState<boolean>(true)
 
     const toggleHandler = () => {
@@ -39,7 +58,7 @@ const SidePanel: React.FunctionComponent = (): JSX.Element => {
     return (
         <Wrapper open={open}>
             <Toggle open={open} toggle={toggleHandler} />
-            <NameFilter />
+            <NameFilter {...props} />
         </Wrapper>
     )
 }
@@ -61,11 +80,16 @@ const Input = styled.input`
     }
 `
 
-const NameFilter: React.FunctionComponent = (): JSX.Element => {
-    const [input, setInput] = React.useState<string>('')
+type TNameFilterProps = {
+    nameFilter: string
+    setNameFilter(input: string): void
+}
+
+const NameFilter: React.FunctionComponent<TNameFilterProps> = (props): JSX.Element => {
+    const { nameFilter, setNameFilter }: TNameFilterProps = props
 
     const changeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setInput(e.target.value)
+        setNameFilter(e.target.value)
     }
 
     return (
@@ -73,9 +97,9 @@ const NameFilter: React.FunctionComponent = (): JSX.Element => {
             <FilterTitle>
                 Country Search
             </FilterTitle>
-            <Input value={input} onChange={changeHandler} name="country" type="text" placeholder="country"  />
+            <Input value={nameFilter} onChange={changeHandler} name="country" type="text" placeholder="country"  />
         </NameFilterWrapper>
     )
 }
 
-export default SidePanel
+export default connector(SidePanel)

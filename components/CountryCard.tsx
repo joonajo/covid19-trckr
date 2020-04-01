@@ -16,6 +16,7 @@ const Wrapper = styled(FlexColumnCenterDiv)`
     cursor: default;
     font-family: 'Roboto Mono';
     animation: ${fadein} 1s;
+    transform: translate3d(0, 0, 0);
 `
 
 const Name = styled.h3`
@@ -73,9 +74,10 @@ const DataCardTitle = styled.p`
 `
 
 const DataCardText = styled.p<{ color: string }>`
-    font-size: .8rem;
+    font-size: .9rem;
     color: ${props => `${props.color}`};
     font-weight: bold;
+    font-family: 'Roboto';
 `
 
 type TDataCardProps = {

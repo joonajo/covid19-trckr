@@ -5,6 +5,8 @@ export type TDataActions =
 | ({ type: dataActionTypes.SET_DATA, payload: TFormattedData })
 | ({ type: dataActionTypes.SET_NAME_FILTER, payload: string })
 | ({ type: dataActionTypes.SET_TOTALS_ALL, payload: TTotals })
+| ({ type: dataActionTypes.SELECTED_COUNTRIES_CLEAR_ALL })
+| ({ type: dataActionTypes.SELECTED_COUNTRIES_SELECT_ALL })
 
 export const setData = (data: TFormattedData): TDataActions => ({
     type: dataActionTypes.SET_DATA,
@@ -19,4 +21,12 @@ export const setNameFilter = (name: string): TDataActions => ({
 export const setTotalsAll = (totals: TTotals): TDataActions => ({
     type: dataActionTypes.SET_TOTALS_ALL,
     payload: totals
+})
+
+export const selectAllCountries = (): TDataActions => ({
+    type: dataActionTypes.SELECTED_COUNTRIES_SELECT_ALL
+})
+
+export const clearAllCountries = (): TDataActions => ({
+    type: dataActionTypes.SELECTED_COUNTRIES_CLEAR_ALL
 })

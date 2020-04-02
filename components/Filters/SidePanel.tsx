@@ -13,7 +13,7 @@ import { TFormattedData, TCountryData } from '../../types/types'
 
 const Wrapper = styled(FlexColumnCenterDiv)<{ open: boolean }>`
     --panel-width: 300px;
-    font-family: 'Roboto Mono';
+    font-family: 'Roboto';
     padding: 40px 10px 10px 10px;
     justify-content: flex-start;
     align-items: flex-start;
@@ -42,7 +42,9 @@ const mapStateToProps = (state: TReduxState) => ({
 })
 
 const mapDispatchToProps = (dispatch: TReduxDispatch) => ({
-    setNameFilter: (name: string) => dispatch(actionCreators.setNameFilter(name))
+    setNameFilter: (name: string) => dispatch(actionCreators.setNameFilter(name)),
+    selectAllCountries: () => dispatch(actionCreators.selectAllCountries()),
+    clearAllCountries: () => dispatch(actionCreators.clearAllCountries())
 })
 
 const connector = connect(mapStateToProps, mapDispatchToProps)
@@ -51,7 +53,14 @@ type TReduxProps = ConnectedProps<typeof connector>
 type TSidePanelProps = TReduxProps & {}
 
 const SidePanel: React.FunctionComponent<TSidePanelProps> = (props): JSX.Element => {
-    const { nameFilter, setNameFilter, fullData, selectedCountries }: TSidePanelProps = props
+    const { 
+        nameFilter, 
+        setNameFilter, 
+        fullData, 
+        selectedCountries, 
+        selectAllCountries, 
+        clearAllCountries 
+    }: TSidePanelProps = props
     
     const [open, setOpen] = React.useState<boolean>(true)
 
@@ -63,7 +72,12 @@ const SidePanel: React.FunctionComponent<TSidePanelProps> = (props): JSX.Element
         <Wrapper open={open}>
             <Toggle open={open} toggle={toggleHandler} />
             <NameFilter {...props} />
-            <CountrySelector data={fullData!} selectedCountries={selectedCountries!} />
+            <CountrySelector 
+                data={fullData!} 
+                selectedCountries={selectedCountries!} 
+                selectAll={selectAllCountries}
+                clearAll={clearAllCountries}    
+            />
         </Wrapper>
     )
 }
@@ -107,31 +121,71 @@ const NameFilter: React.FunctionComponent<TNameFilterProps> = (props): JSX.Eleme
     )
 }
 
-const ListWrapper = styled(FlexColumnCenterDiv)`
+const SelectorWrapper = styled(FlexColumnCenterDiv)`
     justify-content: flex-start;
     width: 100%;
-    margin-top: 20px;
+    margin-top: 10px;
+`
+
+const ButtonsWrapper = styled(FlexRowCenterDiv)``
+
+const Button = styled(FlexRowCenterDiv)`
+    border: 1px solid gainsboro;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 0 10px;
+    padding: 5px 10px;
+    font-family: 'Roboto';
+    transition: all var(--transition-time);
+    background: snow;
+
+    &:hover {
+        color: blue;
+        background: white;
+        box-shadow: 0 0 10px 0 gainsboro;
+    }
+`
+
+const ButtonText = styled.p`
+    font-size: .7rem;
+    text-transform: uppercase;
+`
+
+const ListWrapper = styled(SelectorWrapper)`
     overflow-y: auto;
 `
+
 
 type TCountrySelectorProps = {
     data: TFormattedData,
     selectedCountries: string[]
+    selectAll(): void
+    clearAll(): void
 }
 
 const CountrySelector: React.FunctionComponent<TCountrySelectorProps> = (props): JSX.Element => {
-    const { data, selectedCountries }: TCountrySelectorProps = props
+    const { data, selectedCountries, selectAll, clearAll }: TCountrySelectorProps = props
 
     return (
-        <ListWrapper>
-            { data.map((country: TCountryData) => (
-                <CountryButton key={country.name} name={country.name} selected={selectedCountries.includes(country.name)} />
-            ))}
-        </ListWrapper>
+        <SelectorWrapper>
+            <ButtonsWrapper>
+                <Button>
+                    <ButtonText>Clear All</ButtonText>
+                </Button>
+                <Button>
+                    <ButtonText>Select All</ButtonText>
+                </Button>
+            </ButtonsWrapper>
+            <ListWrapper>
+                { data.map((country: TCountryData) => (
+                    <CountryItem key={country.name} name={country.name} selected={selectedCountries.includes(country.name)} />
+                ))}
+            </ListWrapper>
+        </SelectorWrapper>
     )
 }
 
-const ButtonWrapper = styled(FlexRowCenterDiv)`
+const CountryItemWrapper = styled(FlexRowCenterDiv)`
     justify-content: space-between;
     width: 100%;
     padding: 5px 20px;
@@ -146,6 +200,7 @@ const ButtonWrapper = styled(FlexRowCenterDiv)`
 `
 
 const CountryName = styled.p`
+    text-transform: uppercase;
 `
 
 const CheckWrapper = styled.div`
@@ -153,21 +208,21 @@ const CheckWrapper = styled.div`
     border: 1px solid whitesmoke;
 `
 
-type TCountryButtonProps = {
+type TCountryItemProps = {
     name: string
     selected: boolean
 }
 
-const CountryButton: React.FunctionComponent<TCountryButtonProps> = (props): JSX.Element => {
-    const { name }: TCountryButtonProps = props
+const CountryItem: React.FunctionComponent<TCountryItemProps> = (props): JSX.Element => {
+    const { name }: TCountryItemProps = props
 
     return (
-        <ButtonWrapper>
+        <CountryItemWrapper>
             <CountryName> {name} </CountryName>
             <CheckWrapper>
                 <FontAwesomeIcon icon="check" color={'royalblue'} />
             </CheckWrapper>
-        </ButtonWrapper>
+        </CountryItemWrapper>
     )
 }
 

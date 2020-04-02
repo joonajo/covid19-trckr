@@ -9,7 +9,7 @@ export const DateData = t.type({
 
 export const CountryData = t.type({
     name: t.string,
-    dates: t.array(DateData)
+    dates: t.array(DateData),
 })
 
 export const FormattedData = t.array(CountryData)

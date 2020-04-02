@@ -4,7 +4,7 @@ export const reformatResponseData = (data: TRawData): TFormattedData => {
     const formattedData: TFormattedData = Object.keys(data).map((key: string) => {
         return {
             name: key,
-            dates: data[key]
+            dates: data[key],
         }
     }) 
     return formattedData

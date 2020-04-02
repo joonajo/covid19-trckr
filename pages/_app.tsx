@@ -5,6 +5,14 @@ import App from 'next/app'
 import './global.css'
 import store from '../store/store'
 
+import { config, library } from '@fortawesome/fontawesome-svg-core'
+import '@fortawesome/fontawesome-svg-core/styles.css'
+config.autoAddCss = false
+ 
+import { faCheck } from '@fortawesome/free-solid-svg-icons'
+ 
+library.add(faCheck)
+
 class MyApp extends App {
   // Only uncomment this method if you have blocking data requirements for
   // every single page in your application. This disables the ability to

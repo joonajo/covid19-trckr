@@ -1,9 +1,10 @@
 import { TActions, actionTypes } from "../actionTypes"
-import { TFormattedData, TCountryData, TTotals } from "../../types/types"
+import { TFormattedData, TCountryData, TTotals, TRawData } from "../../types/types"
 
 export type TDataState = {
     fullData?: TFormattedData
     filteredData?: TFormattedData
+    selectedCountries?: string[]
     totals?: TTotals
     nameFilter: string
 }
@@ -14,16 +15,21 @@ const defaultDataState: TDataState = {
 
 const setData = (state: TDataState, action: TActions): TDataState => {
     if (action.type === actionTypes.SET_DATA) {
-        const newFullData: TFormattedData = action.payload.map((data: TCountryData) => ({
-                ...data,
-                name: data.name === 'US' ? 'United States of America' : data.name,
-            }
-        ))
+        const selectedCountries: string[] = []
+        const newFullData: TFormattedData = action.payload.map((data: TCountryData) => {
+            selectedCountries.push(data.name === 'US' ? 'United States of America' : data.name)
+            return ({
+                    ...data,
+                    name: data.name === 'US' ? 'United States of America' : data.name,
+                }
+            )
+        })
 
         return {
             ...state,
             fullData: newFullData,
             filteredData: newFullData,
+            selectedCountries: selectedCountries
         }
     }
     return { ...state }

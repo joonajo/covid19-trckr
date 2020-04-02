@@ -3,7 +3,7 @@ import { connect, ConnectedProps } from 'react-redux'
 
 import { NextPage } from 'next'
 import styled from 'styled-components'
-import CountryCard, { DataCard } from '../../components/CountryCard'
+import CountryCard from '../../components/CountryCard'
 import { FlexColumnCenterDiv } from '../../components/CommonComponents'
 import Loading from '../../components/Loading/Loading'
 import SidePanel from '../../components/Filters/SidePanel'
@@ -76,8 +76,6 @@ const App: NextPage<TAppProps> = (props): JSX.Element => {
             }).catch(e => console.log(e))
     }, [setData])
 
-    console.log(totals)
-
     return (
         <AppWrapper >
             <Loading show={!filteredData || !totals} text spinner slideout fullscreen  />
@@ -99,14 +97,20 @@ const App: NextPage<TAppProps> = (props): JSX.Element => {
 }
 
 const TotalsTitle = styled.h3`
-    color: black;
+    color: dimgray;
     font-weight: normal;
     text-transform: uppercase;
+    font-size: 2rem;
     font-family: 'Roboto Mono';
 `
 
 const TotalsWrapper = styled(ContentWrapper)`
     padding: 20px;
+    margin: 30px;
+    width: auto;
+    cursor: default;
+    background: white;
+    box-shadow: 0 0 20px 0 gainsboro;
 `
 
 const DataCardWrapper = styled(FlexColumnCenterDiv)`
@@ -136,16 +140,18 @@ const DataTotals: React.FunctionComponent<TDataTotalsProps> = (props): JSX.Eleme
     const { confirmed, deaths }: TDataTotalsProps = props
 
     return (
-        <TotalsWrapper flex='row'>
+        <TotalsWrapper flex='column'>
             <TotalsTitle>Globally</TotalsTitle>
-            <DataCardWrapper>
-                <DataCardTitle>cases</DataCardTitle>
-                <DataCardText color='navy'>{confirmed}</DataCardText>
-            </DataCardWrapper>
-            <DataCardWrapper>
-                <DataCardTitle>deaths</DataCardTitle>
-                <DataCardText color='crimson'>{deaths}</DataCardText>
-            </DataCardWrapper>
+            <ContentWrapper flex="row">
+                <DataCardWrapper>
+                    <DataCardTitle>cases</DataCardTitle>
+                    <DataCardText color='navy'>{confirmed}</DataCardText>
+                </DataCardWrapper>
+                <DataCardWrapper>
+                    <DataCardTitle>deaths</DataCardTitle>
+                    <DataCardText color='crimson'>{deaths}</DataCardText>
+                </DataCardWrapper>
+            </ContentWrapper>
         </TotalsWrapper>
     )
 }

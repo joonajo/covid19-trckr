@@ -1,17 +1,17 @@
 import { dataActionTypes } from './actionTypes'
-import { TFormattedData, TTotals } from '../../types/types'
+import { TFormattedData, TTotals, TRawData, TEditedFullData } from '../../types/types'
 
 export type TDataActions = 
-| ({ type: dataActionTypes.SET_DATA, payload: TFormattedData })
+| ({ type: dataActionTypes.SET_DATA, payload: { raw: TRawData, edited: TEditedFullData }})
 | ({ type: dataActionTypes.SET_NAME_FILTER, payload: string })
 | ({ type: dataActionTypes.SET_TOTALS_ALL, payload: TTotals })
 | ({ type: dataActionTypes.SELECTED_COUNTRIES_CLEAR_ALL })
 | ({ type: dataActionTypes.SELECTED_COUNTRIES_SELECT_ALL })
 | ({ type: dataActionTypes.TOGGLE_COUNTRY_SELECTION, payload: string })
 
-export const setData = (data: TFormattedData): TDataActions => ({
+export const setData = ( raw: TRawData, edited: TEditedFullData ): TDataActions => ({
     type: dataActionTypes.SET_DATA,
-    payload: data
+    payload: { raw: raw, edited: edited }
 })
 
 export const setNameFilter = (name: string): TDataActions => ({

@@ -9,7 +9,7 @@ import Toggle from './Toggle'
 
 import { TReduxState, TReduxDispatch } from '../../store/store'
 import actionCreators from '../../store/actionCreators'
-import { TFormattedData, TCountryData } from '../../types/types'
+import { TEditedFullData } from '../../types/types'
 
 const Wrapper = styled(FlexColumnCenterDiv)<{ open: boolean }>`
     --panel-width: 300px;
@@ -35,28 +35,28 @@ const FilterTitle = styled.p`
     margin: 10px 0;
 `
 
-const mapStateToProps = (state: TReduxState) => ({
-    fullData: state.data.fullData,
+const StateProps = (state: TReduxState) => ({
+    data: state.data.editedData,
     nameFilter: state.data.nameFilter,
     selectedCountries: state.data.selectedCountries
 })
 
-const mapDispatchToProps = (dispatch: TReduxDispatch) => ({
+const DispatchProps = (dispatch: TReduxDispatch) => ({
     setNameFilter: (name: string) => dispatch(actionCreators.setNameFilter(name)),
     selectAllCountries: () => dispatch(actionCreators.selectAllCountries()),
     clearAllCountries: () => dispatch(actionCreators.clearAllCountries())
 })
 
-const connector = connect(mapStateToProps, mapDispatchToProps)
+const connector = connect(StateProps, DispatchProps)
 type TReduxProps = ConnectedProps<typeof connector>
 
 type TSidePanelProps = TReduxProps & {}
 
 const SidePanel: React.FunctionComponent<TSidePanelProps> = (props): JSX.Element => {
     const { 
-        nameFilter, 
-        setNameFilter, 
-        fullData, 
+        data,
+        nameFilter,
+        setNameFilter,
         selectedCountries, 
         selectAllCountries, 
         clearAllCountries 
@@ -71,9 +71,12 @@ const SidePanel: React.FunctionComponent<TSidePanelProps> = (props): JSX.Element
     return (
         <Wrapper open={open}>
             <Toggle open={open} toggle={toggleHandler} />
-            <NameFilter {...props} />
+            <NameFilter
+                nameFilter={nameFilter}
+                setNameFilter={setNameFilter}
+            />
             <CountrySelector 
-                data={fullData!} 
+                data={data!} 
                 selectedCountries={selectedCountries!} 
                 selectAll={selectAllCountries}
                 clearAll={clearAllCountries}    
@@ -91,7 +94,6 @@ const Input = styled.input`
     width: 100%;
     padding: 5px 10px;
     border: 1px solid gainsboro;
-    /* font-family: 'Roboto Mono'; */
 
     &::placeholder {
         color: gray;
@@ -157,14 +159,14 @@ const ListWrapper = styled(SelectorWrapper)`
 
 
 type TCountrySelectorProps = {
-    data: TFormattedData,
+    data: TEditedFullData,
     selectedCountries: string[]
     selectAll(): void
     clearAll(): void
 }
 
-const CountrySelector: React.FunctionComponent<TCountrySelectorProps> = (props): JSX.Element => {
-    const { data, selectedCountries, selectAll, clearAll }: TCountrySelectorProps = props
+const CountrySelector: React.FunctionComponent<TCountrySelectorProps> = React.memo((props): JSX.Element => {
+    const { data, selectAll, clearAll }: TCountrySelectorProps = props
 
     return (
         <SelectorWrapper>
@@ -177,13 +179,13 @@ const CountrySelector: React.FunctionComponent<TCountrySelectorProps> = (props):
                 </Button>
             </ButtonsWrapper>
             <ListWrapper>
-                { data.map((country: TCountryData) => (
-                    <CountryItem key={country.name} name={country.name} selected={selectedCountries.includes(country.name)} />
+                { Object.keys(data).map((key: string) => (
+                    <CountryItem key={key} name={key} selected={data[key].show} />
                 ))}
             </ListWrapper>
         </SelectorWrapper>
     )
-}
+})
 
 const CountryItemWrapper = styled(FlexRowCenterDiv)`
     justify-content: space-between;
@@ -217,7 +219,7 @@ type TCountryItemProps = {
 const CountryItem: React.FunctionComponent<TCountryItemProps> = (props): JSX.Element => {
     const { name, selected }: TCountryItemProps = props 
     const color: string = selected ? 'royalblue' : 'transparent'
-
+    
     return (
         <CountryItemWrapper>
             <CountryName> {name} </CountryName>

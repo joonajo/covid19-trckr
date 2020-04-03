@@ -17,6 +17,14 @@ export const FormattedData = t.array(CountryData)
 export type TDateData = t.TypeOf<typeof DateData>
 export type TCountryData = t.TypeOf<typeof CountryData>
 export type TFormattedData = t.TypeOf<typeof FormattedData>
+
+export type TEditedFullData = {
+    [country: string]: {
+        show: boolean,
+        dates: TDateData[]
+    }
+}
+
 export type TRawData = {
     [country: string]: TDateData[]
 }

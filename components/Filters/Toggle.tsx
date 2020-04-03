@@ -15,7 +15,6 @@ const Wrapper = styled(FlexRowCenterDiv)`
 `
 
 const Text = styled.p`
-    font-family: 'Roboto Mono';
     color: dimgray;
     text-transform: uppercase;
     font-size: .6rem;

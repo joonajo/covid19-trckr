@@ -9,8 +9,9 @@ import Loading from '../../components/Loading/Loading'
 import SidePanel from '../../components/Filters/SidePanel'
 import { TReduxState, TReduxDispatch } from '../../store/store'
 import actionCreators from '../../store/actionCreators'
-import { reformatResponseData, getTotals } from '../../utils/utils'
-import { TFormattedData, TRawData, FormattedData, TCountryData, TTotals } from '../../types/types'
+import { reformatResponseData, getTotals, addShowProperty } from '../../utils/utils'
+import { TFormattedData, TRawData, FormattedData, TCountryData, TTotals, TEditedFullData } from '../../types/types'
+import { fadein } from '../../keyframes/keyframes'
 
 const AppWrapper = styled(FlexColumnCenterDiv)`
     position: relative;
@@ -35,18 +36,24 @@ const ContentWrapper = styled(FlexColumnCenterDiv)<{ flex: string }>`
     flex-flow: ${props => `${props.flex}` };
 `
 
-const ErrorText = styled.h2`
+const ErrorText = styled.p`
+    font-size: 2rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-transform: uppercase;
     color: crimson;
+    animation: ${fadein} 2s;
 `
 
 const mapStateToProps = (state: TReduxState) => ({
-    fullData: state.data.fullData,
-    filteredData: state.data.filteredData,
+    editedData: state.data.editedData,
     totals: state.data.totals,
 })
 
 const mapDispatchToProps = (dispatch: TReduxDispatch) => ({
-    setData: (data: TFormattedData) => dispatch(actionCreators.setData(data)),
+    setData: (raw: TRawData, edited: TEditedFullData) => dispatch(actionCreators.setData(raw, edited)),
     setTotalsAll: (totals: TTotals) => dispatch(actionCreators.setTotalsAll(totals))
 })
 
@@ -56,7 +63,7 @@ type TReduxProps = ConnectedProps<typeof connector>
 type TAppProps = TReduxProps & {}
 
 const App: NextPage<TAppProps> = (props): JSX.Element => {
-    const { filteredData, totals, setData, setTotalsAll }: TAppProps = props
+    const { totals, setData, setTotalsAll, editedData }: TAppProps = props
     const [error, setError] = React.useState<boolean>(false)
 
     React.useEffect(() => {
@@ -64,11 +71,12 @@ const App: NextPage<TAppProps> = (props): JSX.Element => {
 
         fetch("https://pomber.github.io/covid19/timeseries.json")
             .then(response => response.json())
-            .then((data: TRawData) => reformatResponseData(data))
-            .then((formattedData: TFormattedData) => {
+            .then((data: TRawData) => {
+                const formattedData: TFormattedData = reformatResponseData(data)
                 const result = FormattedData.decode(formattedData)
                 if (result._tag === 'Right') {
-                    setData(formattedData)
+                    const editedData: TEditedFullData = addShowProperty(data)
+                    setData(data, editedData)
                     setTotalsAll(getTotals(formattedData))
                 } else {
                     setError(true)
@@ -78,17 +86,20 @@ const App: NextPage<TAppProps> = (props): JSX.Element => {
 
     return (
         <AppWrapper >
-            <Loading show={!filteredData || !totals} text spinner slideout fullscreen  />
-            { !!filteredData && !!totals && 
+            <Loading show={(!editedData || !totals) && !error} text spinner slideout fullscreen  />
+            { error && <ErrorText>Error while fetching data</ErrorText> }
+            { editedData && totals && 
                 <ContentWrapper flex='column'>
                     <AppTitle>COVID-19 TRCKR</AppTitle>
                     <SidePanel />
                     <DataTotals {...totals} />
                     <ContentWrapper flex='row wrap'>
-                        { filteredData.map((country: TCountryData) => (
-                            <CountryCard key={country.name} {...country}  />
-                        ))}
-                        { !!error && <ErrorText>error</ErrorText> }
+                        { Object.keys(editedData).map((key: string) => {
+                            const show: boolean = editedData[key].show
+                            return show && (
+                                <CountryCard key={key} name={key} dates={editedData[key].dates} />
+                            )
+                        })}
                     </ContentWrapper>
                 </ContentWrapper>
             }

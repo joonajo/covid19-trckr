@@ -1,4 +1,4 @@
-import { TRawData, TFormattedData, TCountryData, TDateData, TTotals } from "../types/types"
+import { TRawData, TFormattedData, TCountryData, TDateData, TTotals, TEditedFullData } from "../types/types"
 
 export const reformatResponseData = (data: TRawData): TFormattedData => {
     const formattedData: TFormattedData = Object.keys(data).map((key: string) => {
@@ -8,6 +8,17 @@ export const reformatResponseData = (data: TRawData): TFormattedData => {
         }
     }) 
     return formattedData
+}
+
+export const addShowProperty = (data: TRawData) => {
+    const editedData: TEditedFullData = {}
+    for (let key in data) {
+        editedData[key] = {
+            show: true,
+            dates: data[key]
+        }
+    }
+    return editedData
 }
 
 export const getTotals = (data: TFormattedData): TTotals => {

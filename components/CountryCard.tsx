@@ -29,12 +29,13 @@ const Data = styled(FlexRowCenterDiv)`
     width: 100%;
 `
 
-type TCountryCardProps = TCountryData & {
-
+type Props = {
+    name: string
+    dates: TDateData[]
 }
 
-const CountryCard: React.FunctionComponent<TCountryCardProps> = (props): JSX.Element => {   
-    const { name, dates }: TCountryCardProps = props
+const CountryCard: React.FunctionComponent<Props> = React.memo((props): JSX.Element => {   
+    const { name, dates }: Props = props
 
     const [data, setData] = React.useState<TDateData>(
         dates[dates.length - 1]
@@ -58,7 +59,7 @@ const CountryCard: React.FunctionComponent<TCountryCardProps> = (props): JSX.Ele
             </Data>
         </Wrapper>
     )
-}
+})
 
 const DataCardWrapper = styled(FlexColumnCenterDiv)`
     padding: 5px;

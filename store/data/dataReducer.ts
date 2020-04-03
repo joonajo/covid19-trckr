@@ -1,7 +1,9 @@
 import { TActions, actionTypes } from "../actionTypes"
-import { TFormattedData, TCountryData, TTotals, TRawData } from "../../types/types"
+import { TFormattedData, TCountryData, TTotals, TRawData, TEditedFullData } from "../../types/types"
 
 export type TDataState = {
+    rawData?: TRawData
+    editedData?: TEditedFullData
     fullData?: TFormattedData
     filteredData?: TFormattedData
     selectedCountries?: string[]
@@ -15,34 +17,20 @@ const defaultDataState: TDataState = {
 
 const setData = (state: TDataState, action: TActions): TDataState => {
     if (action.type === actionTypes.SET_DATA) {
-        const selectedCountries: string[] = []
-        const newFullData: TFormattedData = action.payload.map((data: TCountryData) => {
-            selectedCountries.push(data.name === 'US' ? 'United States of America' : data.name)
-            return ({
-                    ...data,
-                    name: data.name === 'US' ? 'United States of America' : data.name,
-                }
-            )
-        })
-
         return {
             ...state,
-            fullData: newFullData,
-            filteredData: newFullData,
-            selectedCountries: selectedCountries
+            rawData: action.payload.raw,
+            editedData: action.payload.edited
         }
     }
     return { ...state }
 }
 
 const filterByName = (state: TDataState, action: TActions): TDataState => {
-    if (action.type === actionTypes.SET_NAME_FILTER && state.fullData) {
-        const newFilteredData: TFormattedData = state.fullData.filter((data: TCountryData) => data.name.toLowerCase().includes(action.payload.toLowerCase()))
-
+    if (action.type === actionTypes.SET_NAME_FILTER) {
         return {
             ...state,
             nameFilter: action.payload,
-            filteredData: newFilteredData,
         }
     }
     return { ...state }

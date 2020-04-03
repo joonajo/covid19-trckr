@@ -127,6 +127,7 @@ const SelectorWrapper = styled(FlexColumnCenterDiv)`
     justify-content: flex-start;
     width: 100%;
     margin-top: 10px;
+    overflow-y: auto;
 `
 
 const ButtonsWrapper = styled(FlexRowCenterDiv)``
@@ -154,7 +155,6 @@ const ButtonText = styled.p`
 `
 
 const ListWrapper = styled(SelectorWrapper)`
-    overflow-y: auto;
 `
 
 

@@ -56,6 +56,7 @@ const toggleCountry = (state: TDataState, action: TActions): TDataState => {
     return { ...state }
 }
 
+
 export const dataReducer = (state: TDataState = defaultDataState, action: TActions): TDataState => {
     switch (action.type) {
         case actionTypes.SET_DATA:
@@ -69,6 +70,12 @@ export const dataReducer = (state: TDataState = defaultDataState, action: TActio
 
         case actionTypes.TOGGLE_COUNTRY_SELECTION:
             return toggleCountry(state, action)
+
+        case actionTypes.SELECTED_COUNTRIES_CLEAR_ALL:
+            return { ...state }
+
+        case actionTypes.SELECTED_COUNTRIES_SELECT_ALL:
+            return { ...state }
 
         default:
             return { ...state }

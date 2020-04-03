@@ -91,7 +91,7 @@ const Input = styled.input`
     width: 100%;
     padding: 5px 10px;
     border: 1px solid gainsboro;
-    font-family: 'Roboto Mono';
+    /* font-family: 'Roboto Mono'; */
 
     &::placeholder {
         color: gray;
@@ -136,12 +136,12 @@ const Button = styled(FlexRowCenterDiv)`
     margin: 0 10px;
     padding: 5px 10px;
     font-family: 'Roboto';
-    transition: all var(--transition-time);
-    background: snow;
+    transition: all .1s;
+    background: white;
 
     &:hover {
         color: blue;
-        background: white;
+        /* background: white; */
         box-shadow: 0 0 10px 0 gainsboro;
     }
 `
@@ -201,6 +201,7 @@ const CountryItemWrapper = styled(FlexRowCenterDiv)`
 
 const CountryName = styled.p`
     text-transform: uppercase;
+    font-size: .8rem;
 `
 
 const CheckWrapper = styled.div`
@@ -214,13 +215,14 @@ type TCountryItemProps = {
 }
 
 const CountryItem: React.FunctionComponent<TCountryItemProps> = (props): JSX.Element => {
-    const { name }: TCountryItemProps = props
+    const { name, selected }: TCountryItemProps = props 
+    const color: string = selected ? 'royalblue' : 'transparent'
 
     return (
         <CountryItemWrapper>
             <CountryName> {name} </CountryName>
             <CheckWrapper>
-                <FontAwesomeIcon icon="check" color={'royalblue'} />
+                <FontAwesomeIcon icon="check" color={color} />
             </CheckWrapper>
         </CountryItemWrapper>
     )

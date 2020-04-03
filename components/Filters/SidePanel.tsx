@@ -38,13 +38,13 @@ const FilterTitle = styled.p`
 const StateProps = (state: TReduxState) => ({
     data: state.data.editedData,
     nameFilter: state.data.nameFilter,
-    selectedCountries: state.data.selectedCountries
 })
 
 const DispatchProps = (dispatch: TReduxDispatch) => ({
     setNameFilter: (name: string) => dispatch(actionCreators.setNameFilter(name)),
     selectAllCountries: () => dispatch(actionCreators.selectAllCountries()),
-    clearAllCountries: () => dispatch(actionCreators.clearAllCountries())
+    clearAllCountries: () => dispatch(actionCreators.clearAllCountries()),
+    toggleCountry: (country: string) => dispatch(actionCreators.toggleCountrySelection(country))
 })
 
 const connector = connect(StateProps, DispatchProps)
@@ -56,10 +56,10 @@ const SidePanel: React.FunctionComponent<TSidePanelProps> = (props): JSX.Element
     const { 
         data,
         nameFilter,
-        setNameFilter,
-        selectedCountries, 
+        setNameFilter, 
         selectAllCountries, 
-        clearAllCountries 
+        clearAllCountries,
+        toggleCountry 
     }: TSidePanelProps = props
     
     const [open, setOpen] = React.useState<boolean>(true)
@@ -77,7 +77,7 @@ const SidePanel: React.FunctionComponent<TSidePanelProps> = (props): JSX.Element
             />
             <CountrySelector 
                 data={data!} 
-                selectedCountries={selectedCountries!} 
+                toggleCountry={toggleCountry}
                 selectAll={selectAllCountries}
                 clearAll={clearAllCountries}    
             />
@@ -160,13 +160,13 @@ const ListWrapper = styled(SelectorWrapper)`
 
 type TCountrySelectorProps = {
     data: TEditedFullData,
-    selectedCountries: string[]
     selectAll(): void
     clearAll(): void
+    toggleCountry(country: string): void
 }
 
 const CountrySelector: React.FunctionComponent<TCountrySelectorProps> = React.memo((props): JSX.Element => {
-    const { data, selectAll, clearAll }: TCountrySelectorProps = props
+    const { data, selectAll, clearAll, toggleCountry }: TCountrySelectorProps = props
 
     return (
         <SelectorWrapper>
@@ -180,7 +180,12 @@ const CountrySelector: React.FunctionComponent<TCountrySelectorProps> = React.me
             </ButtonsWrapper>
             <ListWrapper>
                 { Object.keys(data).map((key: string) => (
-                    <CountryItem key={key} name={key} selected={data[key].show} />
+                    <CountryItem 
+                        key={key} 
+                        name={key} 
+                        show={data[key].show}
+                        toggle={toggleCountry}    
+                    />
                 ))}
             </ListWrapper>
         </SelectorWrapper>
@@ -213,15 +218,20 @@ const CheckWrapper = styled.div`
 
 type TCountryItemProps = {
     name: string
-    selected: boolean
+    show: boolean
+    toggle(name: string): void
 }
 
 const CountryItem: React.FunctionComponent<TCountryItemProps> = (props): JSX.Element => {
-    const { name, selected }: TCountryItemProps = props 
-    const color: string = selected ? 'royalblue' : 'transparent'
+    const { name, show, toggle }: TCountryItemProps = props 
+    const color: string = show ? 'royalblue' : 'transparent'
     
+    const clickHandler = () => {
+        toggle(name)
+    }
+
     return (
-        <CountryItemWrapper>
+        <CountryItemWrapper onClick={clickHandler}>
             <CountryName> {name} </CountryName>
             <CheckWrapper>
                 <FontAwesomeIcon icon="check" color={color} />

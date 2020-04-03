@@ -36,6 +36,26 @@ const filterByName = (state: TDataState, action: TActions): TDataState => {
     return { ...state }
 }
 
+const toggleCountry = (state: TDataState, action: TActions): TDataState => {
+    if (action.type === actionTypes.TOGGLE_COUNTRY_SELECTION && state.editedData) {
+        const oldValue: boolean = state.editedData[action.payload].show 
+
+        const newEditedData: TEditedFullData = {
+            ...state.editedData,
+            [action.payload]: {
+                ...state.editedData[action.payload],
+                show: !oldValue
+            }   
+        }
+
+        return {
+            ...state,
+            editedData: newEditedData
+        }
+    }
+    return { ...state }
+}
+
 export const dataReducer = (state: TDataState = defaultDataState, action: TActions): TDataState => {
     switch (action.type) {
         case actionTypes.SET_DATA:
@@ -46,6 +66,9 @@ export const dataReducer = (state: TDataState = defaultDataState, action: TActio
 
         case actionTypes.SET_TOTALS_ALL:
             return { ...state, totals: action.payload }
+
+        case actionTypes.TOGGLE_COUNTRY_SELECTION:
+            return toggleCountry(state, action)
 
         default:
             return { ...state }

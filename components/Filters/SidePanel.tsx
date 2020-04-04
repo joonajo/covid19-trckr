@@ -90,14 +90,41 @@ const NameFilterWrapper = styled(FlexColumnCenterDiv)`
     width: 100%;
 `
 
+const InputWrapper = styled(FlexRowCenterDiv)`
+    width: 100%;
+    position: relative;
+`
+
 const Input = styled.input`
     width: 100%;
-    padding: 5px 10px;
+    padding: 10px 10px;
     border: 1px solid gainsboro;
 
     &::placeholder {
         color: gray;
         font-size: .7rem;
+    }
+`
+
+const ClearButton = styled.p<{ show: boolean }>`
+    position: absolute;
+    padding: 5px;
+    border: 1px solid gainsboro;
+    border-radius: 10px;
+    background: white;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 5px;
+    font-size: .7rem;
+    transition: all .2s;
+    cursor: pointer;
+    z-index: ${props => props.show ? '2' : '-1' };
+    opacity: ${props => props.show ? '1' : '0' };
+
+    &:hover {
+        border-color: royalblue;
+        color: blue;
+        box-shadow: 0 0 10px 0 gainsboro;
     }
 `
 
@@ -113,12 +140,19 @@ const NameFilter: React.FunctionComponent<TNameFilterProps> = (props): JSX.Eleme
         setNameFilter(e.target.value)
     }
 
+    const clearHandler = () => {
+        setNameFilter('')
+    }
+
     return (
         <NameFilterWrapper>
             <FilterTitle>
                 Country Search
             </FilterTitle>
-            <Input value={nameFilter} onChange={changeHandler} name="country" type="text" placeholder="country"  />
+            <InputWrapper>
+                <Input value={nameFilter} onChange={changeHandler} name="country" type="text" placeholder="country"  />
+                <ClearButton show={!!nameFilter.length} onClick={clearHandler}>clear</ClearButton>
+            </InputWrapper>
         </NameFilterWrapper>
     )
 }

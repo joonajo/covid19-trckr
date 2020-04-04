@@ -95,9 +95,8 @@ const App: NextPage<TAppProps> = (props): JSX.Element => {
                     <DataTotals {...totals} />
                     <ContentWrapper flex='row wrap'>
                         { Object.keys(editedData).map((key: string) => {
-                            const show: boolean = editedData[key].show
-                            return show && (
-                                <CountryCard key={key} name={key} dates={editedData[key].dates} />
+                            return (
+                                <CountryCard key={key} name={key} data={editedData[key]} />
                             )
                         })}
                     </ContentWrapper>

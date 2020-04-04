@@ -2,21 +2,25 @@ import * as React from 'react'
 import styled from 'styled-components'
 import { FlexColumnCenterDiv, FlexRowCenterDiv } from './CommonComponents'
 import { fadein } from '../keyframes/keyframes'
-import { TCountryData, TDateData } from '../types/types'
+import { TDateData } from '../types/types'
 
-const Wrapper = styled(FlexColumnCenterDiv)`
+const Wrapper = styled(FlexColumnCenterDiv)<{ show: boolean }>`
     margin: 10px;
-    padding: 5px 10px;
+    overflow: hidden;
     justify-content: space-between;
-    width: 200px;
     min-height: 100px;
     align-items: flex-start;
     background: white;
     box-shadow: 0 0 20px 0 gainsboro;
     cursor: default;
     font-family: 'Roboto Mono';
-    animation: ${fadein} 1s;
+    animation: ${fadein} .5s;
     transform: translate3d(0, 0, 0);
+    transition: opacity var(--transition-time);
+    width: 200px;
+    padding: 5px 10px;
+    opacity: ${props => props.show ? '1' : '0' };
+    display: ${props => props.show ? 'flex' : 'none' };
 `
 
 const Name = styled.h3`
@@ -31,30 +35,31 @@ const Data = styled(FlexRowCenterDiv)`
 
 type Props = {
     name: string
-    dates: TDateData[]
+    data: {
+        dates: TDateData[]
+        show: boolean
+    }
 }
 
 const CountryCard: React.FunctionComponent<Props> = React.memo((props): JSX.Element => {   
-    const { name, dates }: Props = props
+    const { name, data }: Props = props
 
-    const [data, setData] = React.useState<TDateData>(
-        dates[dates.length - 1]
-    )
+    const latestData: TDateData = data.dates[data.dates.length-1]
 
     return (
-        <Wrapper>
+        <Wrapper show={data.show}>
             <Name>
                 {name}
             </Name>
             <Data>
                 <DataCard
                     title='cases'
-                    text={data.confirmed}
+                    text={latestData.confirmed}
                 />
                 <DataCard
                     title='deaths'
                     color='crimson'
-                    text={data.deaths}
+                    text={latestData.deaths}
                 />
             </Data>
         </Wrapper>

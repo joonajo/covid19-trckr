@@ -144,7 +144,6 @@ const Button = styled(FlexRowCenterDiv)`
 
     &:hover {
         color: blue;
-        /* background: white; */
         box-shadow: 0 0 10px 0 gainsboro;
     }
 `
@@ -171,10 +170,10 @@ const CountrySelector: React.FunctionComponent<TCountrySelectorProps> = React.me
     return (
         <SelectorWrapper>
             <ButtonsWrapper>
-                <Button>
+                <Button onClick={clearAll}>
                     <ButtonText>Clear All</ButtonText>
                 </Button>
-                <Button>
+                <Button onClick={selectAll}>
                     <ButtonText>Select All</ButtonText>
                 </Button>
             </ButtonsWrapper>
@@ -211,9 +210,14 @@ const CountryName = styled.p`
     font-size: .8rem;
 `
 
-const CheckWrapper = styled.div`
+const CheckWrapper = styled.div<{ selected: boolean }>`
     background: white;
     border: 1px solid whitesmoke;
+
+    svg {
+        color: ${props => props.selected ? 'blue' : 'transparent' };
+        transition: all .1s;
+    }
 `
 
 type TCountryItemProps = {
@@ -224,7 +228,6 @@ type TCountryItemProps = {
 
 const CountryItem: React.FunctionComponent<TCountryItemProps> = (props): JSX.Element => {
     const { name, show, toggle }: TCountryItemProps = props 
-    const color: string = show ? 'royalblue' : 'transparent'
     
     const clickHandler = () => {
         toggle(name)
@@ -233,8 +236,8 @@ const CountryItem: React.FunctionComponent<TCountryItemProps> = (props): JSX.Ele
     return (
         <CountryItemWrapper onClick={clickHandler}>
             <CountryName> {name} </CountryName>
-            <CheckWrapper>
-                <FontAwesomeIcon icon="check" color={color} />
+            <CheckWrapper selected={show}>
+                <FontAwesomeIcon icon="check" />
             </CheckWrapper>
         </CountryItemWrapper>
     )

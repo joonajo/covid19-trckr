@@ -56,6 +56,41 @@ const toggleCountry = (state: TDataState, action: TActions): TDataState => {
     return { ...state }
 }
 
+const clearAllSelected = (state: TDataState, action: TActions): TDataState => {
+    if (action.type === actionTypes.SELECTED_COUNTRIES_CLEAR_ALL && state.editedData) {
+        const newEditedData: TEditedFullData = {}
+
+        for (let key in state.editedData) {
+            newEditedData[key] = {
+                ...state.editedData[key],
+                show: false
+            }
+        }
+
+        return {
+            ...state,
+            editedData: newEditedData,
+        }
+    }
+    return { ...state }
+}
+
+const setAllCountries = (state: TDataState, val: boolean): TDataState => {
+    const newEditedData: TEditedFullData = {}
+
+    for (let key in state.editedData) {
+        newEditedData[key] = {
+            ...state.editedData[key],
+            show: val
+        }
+    }
+
+    return {
+        ...state,
+        editedData: newEditedData,
+    }
+}
+
 
 export const dataReducer = (state: TDataState = defaultDataState, action: TActions): TDataState => {
     switch (action.type) {
@@ -72,10 +107,10 @@ export const dataReducer = (state: TDataState = defaultDataState, action: TActio
             return toggleCountry(state, action)
 
         case actionTypes.SELECTED_COUNTRIES_CLEAR_ALL:
-            return { ...state }
+            return setAllCountries(state, false)
 
         case actionTypes.SELECTED_COUNTRIES_SELECT_ALL:
-            return { ...state }
+            return setAllCountries(state, true)
 
         default:
             return { ...state }

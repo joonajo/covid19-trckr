@@ -10,9 +10,10 @@ import SidePanel from '../../components/Filters/SidePanel'
 import { TReduxState, TReduxDispatch } from '../../store/store'
 import actionCreators from '../../store/actionCreators'
 import { reformatResponseData, getTotals, addShowProperty } from '../../utils/utils'
-import { TFormattedData, TRawData, FormattedData, TCountryData, TTotals, TEditedFullData } from '../../types/types'
+import { TFormattedData, TRawData, FormattedData, TTotals, TEditedFullData } from '../../types/types'
 import { fadein } from '../../keyframes/keyframes'
 import Input from '../../components/Input'
+import BackToTopButton from '../../components/BackToTopButton'
 
 const AppWrapper = styled(FlexColumnCenterDiv)`
     position: relative;
@@ -112,6 +113,7 @@ const App: NextPage<TAppProps> = (props): JSX.Element => {
                         highlightedCountry={highlightedCountry}
                         setHighlight={highlightCountry} 
                     />
+                    <BackToTopButton />
                 </ContentWrapper>
             }
         </AppWrapper>

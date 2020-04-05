@@ -9,9 +9,9 @@ import { config, library } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
 config.autoAddCss = false
  
-import { faCheck } from '@fortawesome/free-solid-svg-icons'
+import { faCheck, faArrowUp } from '@fortawesome/free-solid-svg-icons'
  
-library.add(faCheck)
+library.add(faCheck, faArrowUp)
 
 class MyApp extends App {
   // Only uncomment this method if you have blocking data requirements for

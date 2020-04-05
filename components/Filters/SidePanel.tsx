@@ -10,6 +10,7 @@ import Toggle from './Toggle'
 import { TReduxState, TReduxDispatch } from '../../store/store'
 import actionCreators from '../../store/actionCreators'
 import { TEditedFullData } from '../../types/types'
+import Input from '../Input'
 
 const Wrapper = styled(FlexColumnCenterDiv)<{ open: boolean }>`
     --panel-width: 300px;
@@ -90,51 +91,16 @@ const NameFilterWrapper = styled(FlexColumnCenterDiv)`
     width: 100%;
 `
 
-const InputWrapper = styled(FlexRowCenterDiv)`
-    width: 100%;
-    position: relative;
-`
-
-const Input = styled.input`
-    width: 100%;
-    padding: 10px 10px;
-    border: 1px solid gainsboro;
-
-    &::placeholder {
-        color: gray;
-        font-size: .7rem;
-    }
-`
-
-const ClearButton = styled.p<{ show: boolean }>`
-    position: absolute;
-    padding: 5px;
-    border: 1px solid gainsboro;
-    border-radius: 10px;
-    background: white;
-    top: 50%;
-    transform: translateY(-50%);
-    right: 5px;
-    font-size: .7rem;
-    transition: all .2s;
-    cursor: pointer;
-    z-index: ${props => props.show ? '2' : '-1' };
-    opacity: ${props => props.show ? '1' : '0' };
-
-    &:hover {
-        border-color: royalblue;
-        color: blue;
-        box-shadow: 0 0 10px 0 gainsboro;
-    }
-`
-
 type TNameFilterProps = {
     nameFilter: string
     setNameFilter(input: string): void
 }
 
 const NameFilter: React.FunctionComponent<TNameFilterProps> = (props): JSX.Element => {
-    const { nameFilter, setNameFilter }: TNameFilterProps = props
+    const { 
+        nameFilter, 
+        setNameFilter 
+    }: TNameFilterProps = props
 
     const changeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setNameFilter(e.target.value)
@@ -149,10 +115,14 @@ const NameFilter: React.FunctionComponent<TNameFilterProps> = (props): JSX.Eleme
             <FilterTitle>
                 Country Search
             </FilterTitle>
-            <InputWrapper>
-                <Input value={nameFilter} onChange={changeHandler} name="country" type="text" placeholder="country"  />
-                <ClearButton show={!!nameFilter.length} onClick={clearHandler}>clear</ClearButton>
-            </InputWrapper>
+            <Input 
+                value={nameFilter}
+                name="country"
+                type="text"
+                placeholder="country"
+                change={changeHandler}
+                clear={clearHandler}
+            />
         </NameFilterWrapper>
     )
 }

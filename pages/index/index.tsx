@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { useState, useEffect, FunctionComponent } from 'react'
 import { connect, ConnectedProps } from 'react-redux'
 
 import { NextPage } from 'next'
 import styled from 'styled-components'
 import CountryCard from '../../components/CountryCard'
-import { FlexColumnCenterDiv } from '../../components/CommonComponents'
+import { FlexColumnCenterDiv, FlexRowCenterDiv } from '../../components/CommonComponents'
 import Loading from '../../components/Loading/Loading'
 import SidePanel from '../../components/Filters/SidePanel'
 import { TReduxState, TReduxDispatch } from '../../store/store'
@@ -12,17 +12,18 @@ import actionCreators from '../../store/actionCreators'
 import { reformatResponseData, getTotals, addShowProperty } from '../../utils/utils'
 import { TFormattedData, TRawData, FormattedData, TCountryData, TTotals, TEditedFullData } from '../../types/types'
 import { fadein } from '../../keyframes/keyframes'
+import Input from '../../components/Input'
 
 const AppWrapper = styled(FlexColumnCenterDiv)`
     position: relative;
     justify-content: flex-start;
     width: 100vw;
-    height: 100vh;
+    height: 100%;
     overflow-x: hidden;
 `
 
 const AppTitle = styled.h1`
-    padding: 20px;
+    padding: 0 20px 20px 0;
     width: 100%;
     text-align: right;
     color: royalblue;
@@ -49,6 +50,7 @@ const ErrorText = styled.p`
 
 const mapStateToProps = (state: TReduxState) => ({
     editedData: state.data.editedData,
+    countries: state.data.countries,
     totals: state.data.totals,
 })
 
@@ -63,10 +65,17 @@ type TReduxProps = ConnectedProps<typeof connector>
 type TAppProps = TReduxProps & {}
 
 const App: NextPage<TAppProps> = (props): JSX.Element => {
-    const { totals, setData, setTotalsAll, editedData }: TAppProps = props
-    const [error, setError] = React.useState<boolean>(false)
+    const { 
+        totals, 
+        countries,
+        setData, 
+        setTotalsAll, 
+        editedData 
+    }: TAppProps = props
 
-    React.useEffect(() => {
+    const [error, setError] = useState<boolean>(false)
+
+    useEffect(() => {
         document.title = "COVID-19 Trckr"
 
         fetch("https://pomber.github.io/covid19/timeseries.json")
@@ -88,18 +97,12 @@ const App: NextPage<TAppProps> = (props): JSX.Element => {
         <AppWrapper >
             <Loading show={(!editedData || !totals) && !error} text spinner slideout fullscreen  />
             { error && <ErrorText>Error while fetching data</ErrorText> }
-            { editedData && totals && 
+            { editedData && totals && countries && 
                 <ContentWrapper flex='column'>
                     <AppTitle>COVID-19 TRCKR</AppTitle>
                     <SidePanel />
-                    <DataTotals {...totals} />
-                    <ContentWrapper flex='row wrap'>
-                        { Object.keys(editedData).map((key: string) => {
-                            return (
-                                <CountryCard key={key} name={key} data={editedData[key]} />
-                            )
-                        })}
-                    </ContentWrapper>
+                    <GlobalTotals {...totals} />
+                    <Countries data={editedData} countries={countries} />
                 </ContentWrapper>
             }
         </AppWrapper>
@@ -116,7 +119,7 @@ const TotalsTitle = styled.h3`
 
 const TotalsWrapper = styled(ContentWrapper)`
     padding: 20px;
-    margin: 30px;
+    margin-bottom: 30px;
     width: auto;
     cursor: default;
     background: white;
@@ -142,13 +145,12 @@ const DataCardText = styled.h2<{ color: string }>`
     font-family: 'Roboto';
 `
 
-type TDataTotalsProps = TTotals & {
+type TGlobalTotalsProps = TTotals & {
 
 }
 
-const DataTotals: React.FunctionComponent<TDataTotalsProps> = (props): JSX.Element => {
-    const { confirmed, deaths }: TDataTotalsProps = props
-
+const GlobalTotals: FunctionComponent<TGlobalTotalsProps> = (props): JSX.Element => {
+    const { confirmed, deaths }: TGlobalTotalsProps = props
     return (
         <TotalsWrapper flex='column'>
             <TotalsTitle>Globally</TotalsTitle>
@@ -163,6 +165,106 @@ const DataTotals: React.FunctionComponent<TDataTotalsProps> = (props): JSX.Eleme
                 </DataCardWrapper>
             </ContentWrapper>
         </TotalsWrapper>
+    )
+}
+
+const CountriesWrapper = styled(FlexColumnCenterDiv)`
+`
+
+const SearchWrapper = styled(FlexRowCenterDiv)`
+    width: 100%;
+    max-width: 300px;
+    position: relative;
+    justify-content: flex-end;
+`
+
+const SearchList = styled(FlexColumnCenterDiv)`
+    justify-content: flex-start;
+    position: absolute;
+    font-size: .8rem;
+    width: 100%;
+    top: 100%;
+    left: 0;
+    z-index: 5;
+    background: white;
+    box-shadow: 0 0 20px gainsboro;
+`
+
+const ListItem = styled.p`
+    padding: 10px;
+    color: dimgray;
+    text-transform: uppercase;
+    cursor: pointer;
+    width: 100%;
+    transition: all var(--transition-time);
+
+    &:hover {
+        color: blue;
+        background: whitesmoke;
+    }
+`
+
+type CountriesProps = {
+    data: TEditedFullData
+    countries: string[]
+}
+
+const Countries: FunctionComponent<CountriesProps> = (props): JSX.Element => {
+    const {
+        data,
+        countries
+    }: CountriesProps = props
+    
+    const [input, setInput] = useState<string>('')
+    const [filteredCountries, setFilteredCountries] = useState<string[]>()
+
+    useEffect(() => {
+        if ((!!input.length)) {
+            const newFilteredCountries: string[] = countries.filter(country => country.toLowerCase().includes(input.toLowerCase())) 
+            setFilteredCountries(newFilteredCountries)
+        } else {
+            setFilteredCountries([])
+        }
+    }, [input])
+
+    const clickHandler = (name: string) => {
+        const elem = document.getElementById(name)
+        if (elem) {
+            const y: number = elem.getBoundingClientRect().top
+            window.scrollTo({
+                top: y,
+                behavior: 'smooth'
+            })
+        }
+    }
+    
+    return (
+        <CountriesWrapper>
+            <SearchWrapper>
+                <Input 
+                    value={input}
+                    name="country"
+                    type="text"
+                    placeholder="country"
+                    change={(e) => setInput(e.target.value)}
+                    clear={() => setInput('')}
+                />
+                { !!filteredCountries &&
+                    <SearchList>
+                        { filteredCountries.map(country => (
+                            <ListItem key={country} onClick={() => clickHandler(country)} >{country}</ListItem>
+                        ))}
+                    </SearchList>
+                }
+            </SearchWrapper>
+            <ContentWrapper flex='row wrap'>
+                { Object.keys(data).map((key: string) => {
+                    return (
+                        <CountryCard key={key} name={key} data={data[key]} />
+                    )
+                })}
+            </ContentWrapper>
+        </CountriesWrapper>
     )
 }
 

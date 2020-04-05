@@ -47,7 +47,7 @@ const CountryCard: React.FunctionComponent<Props> = React.memo((props): JSX.Elem
     const latestData: TDateData = data.dates[data.dates.length-1]
 
     return (
-        <Wrapper show={data.show}>
+        <Wrapper show={data.show} id={name}>
             <Name>
                 {name}
             </Name>

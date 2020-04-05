@@ -1,12 +1,10 @@
 import { TActions, actionTypes } from "../actionTypes"
-import { TFormattedData, TCountryData, TTotals, TRawData, TEditedFullData } from "../../types/types"
+import { TTotals, TRawData, TEditedFullData } from "../../types/types"
 
 export type TDataState = {
     rawData?: TRawData
     editedData?: TEditedFullData
-    fullData?: TFormattedData
-    filteredData?: TFormattedData
-    selectedCountries?: string[]
+    countries?: string[]
     totals?: TTotals
     nameFilter: string
 }
@@ -17,10 +15,12 @@ const defaultDataState: TDataState = {
 
 const setData = (state: TDataState, action: TActions): TDataState => {
     if (action.type === actionTypes.SET_DATA) {
+        const countries: string[] = Object.keys(action.payload.raw).map(key => key)
         return {
             ...state,
             rawData: action.payload.raw,
-            editedData: action.payload.edited
+            editedData: action.payload.edited,
+            countries: countries,
         }
     }
     return { ...state }
@@ -51,25 +51,6 @@ const toggleCountry = (state: TDataState, action: TActions): TDataState => {
         return {
             ...state,
             editedData: newEditedData
-        }
-    }
-    return { ...state }
-}
-
-const clearAllSelected = (state: TDataState, action: TActions): TDataState => {
-    if (action.type === actionTypes.SELECTED_COUNTRIES_CLEAR_ALL && state.editedData) {
-        const newEditedData: TEditedFullData = {}
-
-        for (let key in state.editedData) {
-            newEditedData[key] = {
-                ...state.editedData[key],
-                show: false
-            }
-        }
-
-        return {
-            ...state,
-            editedData: newEditedData,
         }
     }
     return { ...state }

@@ -27,7 +27,11 @@ type TToggleProps = {
 }
 
 const Toggle: React.FunctionComponent<TToggleProps> = (props): JSX.Element => {
-    const { open, toggle, toLeft = true }: TToggleProps = props
+    const { 
+        open, 
+        toggle, 
+        toLeft = true 
+    }: TToggleProps = props
 
     return (
         <Wrapper onClick={toggle}>

@@ -8,6 +8,7 @@ export type TDataActions =
 | ({ type: dataActionTypes.SELECTED_COUNTRIES_CLEAR_ALL })
 | ({ type: dataActionTypes.SELECTED_COUNTRIES_SELECT_ALL })
 | ({ type: dataActionTypes.TOGGLE_COUNTRY_SELECTION, payload: string })
+| ({ type: dataActionTypes.HIGHLIGHT_COUNTRY, payload: string })
 
 export const setData = ( raw: TRawData, edited: TEditedFullData ): TDataActions => ({
     type: dataActionTypes.SET_DATA,
@@ -34,5 +35,10 @@ export const clearAllCountries = (): TDataActions => ({
 
 export const toggleCountrySelection = (country: string): TDataActions => ({
     type: dataActionTypes.TOGGLE_COUNTRY_SELECTION,
+    payload: country
+})
+
+export const highlightCountry = (country: string): TDataActions => ({
+    type: dataActionTypes.HIGHLIGHT_COUNTRY,
     payload: country
 })

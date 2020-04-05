@@ -17,7 +17,7 @@ import Input from '../../components/Input'
 const AppWrapper = styled(FlexColumnCenterDiv)`
     position: relative;
     justify-content: flex-start;
-    width: 100vw;
+    width: 100%;
     height: 100%;
     overflow-x: hidden;
 `
@@ -52,11 +52,13 @@ const mapStateToProps = (state: TReduxState) => ({
     editedData: state.data.editedData,
     countries: state.data.countries,
     totals: state.data.totals,
+    highlightedCountry: state.data.highlightedCountry
 })
 
 const mapDispatchToProps = (dispatch: TReduxDispatch) => ({
     setData: (raw: TRawData, edited: TEditedFullData) => dispatch(actionCreators.setData(raw, edited)),
-    setTotalsAll: (totals: TTotals) => dispatch(actionCreators.setTotalsAll(totals))
+    setTotalsAll: (totals: TTotals) => dispatch(actionCreators.setTotalsAll(totals)),
+    highlightCountry: (country: string) => dispatch(actionCreators.highlightCountry(country)),
 })
 
 const connector = connect(mapStateToProps, mapDispatchToProps)
@@ -70,7 +72,9 @@ const App: NextPage<TAppProps> = (props): JSX.Element => {
         countries,
         setData, 
         setTotalsAll, 
-        editedData 
+        editedData,
+        highlightedCountry,
+        highlightCountry
     }: TAppProps = props
 
     const [error, setError] = useState<boolean>(false)
@@ -102,7 +106,12 @@ const App: NextPage<TAppProps> = (props): JSX.Element => {
                     <AppTitle>COVID-19 TRCKR</AppTitle>
                     <SidePanel />
                     <GlobalTotals {...totals} />
-                    <Countries data={editedData} countries={countries} />
+                    <Countries 
+                        data={editedData} 
+                        countries={countries} 
+                        highlightedCountry={highlightedCountry}
+                        setHighlight={highlightCountry} 
+                    />
                 </ContentWrapper>
             }
         </AppWrapper>
@@ -207,15 +216,20 @@ const ListItem = styled.p`
 type CountriesProps = {
     data: TEditedFullData
     countries: string[]
+    highlightedCountry?: string
+    setHighlight(country: string): void
 }
 
 const Countries: FunctionComponent<CountriesProps> = (props): JSX.Element => {
     const {
         data,
-        countries
+        countries,
+        highlightedCountry,
+        setHighlight
     }: CountriesProps = props
     
     const [input, setInput] = useState<string>('')
+    const [showList, setShowList] = useState<boolean>(false)
     const [filteredCountries, setFilteredCountries] = useState<string[]>()
 
     useEffect(() => {
@@ -230,11 +244,12 @@ const Countries: FunctionComponent<CountriesProps> = (props): JSX.Element => {
     const clickHandler = (name: string) => {
         const elem = document.getElementById(name)
         if (elem) {
-            const y: number = elem.getBoundingClientRect().top
+            const y: number = elem.getBoundingClientRect().top - 200
             window.scrollTo({
                 top: y,
                 behavior: 'smooth'
             })
+            setHighlight(name)
         }
     }
     
@@ -260,7 +275,7 @@ const Countries: FunctionComponent<CountriesProps> = (props): JSX.Element => {
             <ContentWrapper flex='row wrap'>
                 { Object.keys(data).map((key: string) => {
                     return (
-                        <CountryCard key={key} name={key} data={data[key]} />
+                        <CountryCard key={key} name={key} data={data[key]} highlighted={key === highlightedCountry} />
                     )
                 })}
             </ContentWrapper>

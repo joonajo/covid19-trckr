@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React, { useState, useEffect, FunctionComponent } from 'react'
 import styled from 'styled-components'
 import { connect, ConnectedProps } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -53,7 +53,7 @@ type TReduxProps = ConnectedProps<typeof connector>
 
 type TSidePanelProps = TReduxProps & {}
 
-const SidePanel: React.FunctionComponent<TSidePanelProps> = (props): JSX.Element => {
+const SidePanel: FunctionComponent<TSidePanelProps> = (props): JSX.Element => {
     const { 
         data,
         nameFilter,
@@ -63,7 +63,7 @@ const SidePanel: React.FunctionComponent<TSidePanelProps> = (props): JSX.Element
         toggleCountry 
     }: TSidePanelProps = props
     
-    const [open, setOpen] = React.useState<boolean>(true)
+    const [open, setOpen] = useState<boolean>(false)
 
     const toggleHandler = () => {
         setOpen(!open)
@@ -96,7 +96,7 @@ type TNameFilterProps = {
     setNameFilter(input: string): void
 }
 
-const NameFilter: React.FunctionComponent<TNameFilterProps> = (props): JSX.Element => {
+const NameFilter: FunctionComponent<TNameFilterProps> = (props): JSX.Element => {
     const { 
         nameFilter, 
         setNameFilter 
@@ -168,7 +168,7 @@ type TCountrySelectorProps = {
     toggleCountry(country: string): void
 }
 
-const CountrySelector: React.FunctionComponent<TCountrySelectorProps> = React.memo((props): JSX.Element => {
+const CountrySelector: FunctionComponent<TCountrySelectorProps> = React.memo((props): JSX.Element => {
     const { data, selectAll, clearAll, toggleCountry }: TCountrySelectorProps = props
 
     return (
@@ -230,7 +230,7 @@ type TCountryItemProps = {
     toggle(name: string): void
 }
 
-const CountryItem: React.FunctionComponent<TCountryItemProps> = (props): JSX.Element => {
+const CountryItem: FunctionComponent<TCountryItemProps> = (props): JSX.Element => {
     const { name, show, toggle }: TCountryItemProps = props 
     
     const clickHandler = () => {

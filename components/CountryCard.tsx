@@ -4,7 +4,7 @@ import { FlexColumnCenterDiv, FlexRowCenterDiv } from './CommonComponents'
 import { fadein } from '../keyframes/keyframes'
 import { TDateData } from '../types/types'
 
-const Wrapper = styled(FlexColumnCenterDiv)<{ show: boolean }>`
+const Wrapper = styled(FlexColumnCenterDiv)<{ show: boolean, highlight: boolean }>`
     margin: 10px;
     overflow: hidden;
     justify-content: space-between;
@@ -21,6 +21,8 @@ const Wrapper = styled(FlexColumnCenterDiv)<{ show: boolean }>`
     padding: 5px 10px;
     opacity: ${props => props.show ? '1' : '0' };
     display: ${props => props.show ? 'flex' : 'none' };
+    border: ${props => props.highlight ? '2px solid royalblue' : 'null' };
+    box-shadow: ${props => props.highlight ? '0 0 20px 10px gainsboro' : 'null' };
 `
 
 const Name = styled.h3`
@@ -39,15 +41,20 @@ type Props = {
         dates: TDateData[]
         show: boolean
     }
+    highlighted: boolean
 }
 
 const CountryCard: React.FunctionComponent<Props> = React.memo((props): JSX.Element => {   
-    const { name, data }: Props = props
+    const { 
+        name, 
+        data,
+        highlighted 
+    }: Props = props
 
     const latestData: TDateData = data.dates[data.dates.length-1]
 
     return (
-        <Wrapper show={data.show} id={name}>
+        <Wrapper show={data.show} highlight={highlighted} id={name}>
             <Name>
                 {name}
             </Name>

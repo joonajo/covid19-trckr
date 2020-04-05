@@ -6,6 +6,7 @@ export type TDataState = {
     editedData?: TEditedFullData
     countries?: string[]
     totals?: TTotals
+    highlightedCountry?: string
     nameFilter: string
 }
 
@@ -72,6 +73,15 @@ const setAllCountries = (state: TDataState, val: boolean): TDataState => {
     }
 }
 
+const highlightCountry = (state: TDataState, action: TActions): TDataState => {
+    if (action.type === actionTypes.HIGHLIGHT_COUNTRY) {
+        return {
+            ...state,
+            highlightedCountry: action.payload
+        }
+    }
+    return { ...state }
+}
 
 export const dataReducer = (state: TDataState = defaultDataState, action: TActions): TDataState => {
     switch (action.type) {
@@ -92,6 +102,9 @@ export const dataReducer = (state: TDataState = defaultDataState, action: TActio
 
         case actionTypes.SELECTED_COUNTRIES_SELECT_ALL:
             return setAllCountries(state, true)
+
+        case actionTypes.HIGHLIGHT_COUNTRY:
+            return highlightCountry(state, action)
 
         default:
             return { ...state }

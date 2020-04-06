@@ -4,8 +4,7 @@ import { FlexRowCenterDiv } from './CommonComponents'
 
 
 const InputWrapper = styled(FlexRowCenterDiv)`
-    width: 100%;
-    max-width: 300px;
+    width: 300px;
     position: relative;
 `
 
@@ -49,6 +48,7 @@ type Props = {
     placeholder: string
     change(e: React.ChangeEvent<HTMLInputElement>): void
     clear(): void
+    focus?: () => void
 }
 
 const Input: React.FunctionComponent<Props> = (props): JSX.Element => {
@@ -58,12 +58,13 @@ const Input: React.FunctionComponent<Props> = (props): JSX.Element => {
         name,
         change,
         clear,
-        placeholder
+        placeholder,
+        focus
     }: Props = props
 
     return (
         <InputWrapper>
-            <InputElem value={value} onChange={change} name={name} type={type} placeholder={placeholder} autoComplete='off' />
+            <InputElem value={value} onFocus={focus} onChange={change} name={name} type={type} placeholder={placeholder} autoComplete='off' />
             <ClearButton show={!!value.length} onClick={clear}>clear</ClearButton>
         </InputWrapper>
     )

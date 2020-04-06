@@ -13,7 +13,6 @@ const Wrapper = styled(FlexColumnCenterDiv)<{ show: boolean, highlight: boolean 
     background: white;
     box-shadow: 0 0 20px 0 gainsboro;
     cursor: default;
-    font-family: 'Roboto Mono';
     animation: ${fadein} .5s;
     transform: translate3d(0, 0, 0);
     transition: opacity var(--transition-time);
@@ -27,6 +26,7 @@ const Wrapper = styled(FlexColumnCenterDiv)<{ show: boolean, highlight: boolean 
 
 const Name = styled.h3`
     color: black;
+    /* transform: scaleY(.95); */
     font-weight: normal;
     text-transform: uppercase;
 `

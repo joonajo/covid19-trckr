@@ -18,6 +18,10 @@ const Wrapper = styled(FlexRowCenterDiv)<{ show: boolean }>`
     cursor: pointer;
     transition: all .2s;
 
+    svg {
+        color: dimgray;
+    }
+
     &:hover {
         border-color: royalblue;
         color: royalblue;
@@ -35,14 +39,13 @@ const Text = styled.p`
 `
 
 const BackToTopButton: React.FunctionComponent = React.memo((): JSX.Element => {
-    const buttonRef: React.RefObject<HTMLDivElement> = useRef(null)
     const [show, setShow] = useState<boolean>(false)
 
     useEffect(() => {
         window.addEventListener('scroll', scrollHandler, true)
 
         return () => window.removeEventListener('scroll', scrollHandler, true)
-    }, [buttonRef, show])
+    }, [show])
 
     const scrollHandler = () => {
         const newShow: boolean = window.pageYOffset > SHOW_TRESHOLD
@@ -57,8 +60,8 @@ const BackToTopButton: React.FunctionComponent = React.memo((): JSX.Element => {
     }
 
     return (
-        <Wrapper show={show} ref={buttonRef} onClick={clickHandler}>
-            <FontAwesomeIcon icon="arrow-up" color="dimgray" />
+        <Wrapper show={show} onClick={clickHandler}>
+            <FontAwesomeIcon icon="arrow-up" />
             <Text>back to top</Text>
         </Wrapper>
     )

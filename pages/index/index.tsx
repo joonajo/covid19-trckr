@@ -199,20 +199,18 @@ const SearchList = styled(FlexColumnCenterDiv)`
     z-index: 5;
     background: white;
     box-shadow: 0 0 20px gainsboro;
+    max-height: 300px;
+    overflow-y: auto;
 `
 
-const ListItem = styled.p`
+const ListItem = styled.p<{ highlight: boolean }>`
     padding: 10px;
-    color: dimgray;
+    color: ${props => props.highlight ? 'blue' : 'dimgray' };
+    background: ${props => props.highlight ? 'gainsboro' : 'white' };
     text-transform: uppercase;
     cursor: pointer;
     width: 100%;
     transition: all var(--transition-time);
-
-    &:hover {
-        color: blue;
-        background: whitesmoke;
-    }
 `
 
 type CountriesProps = {
@@ -231,17 +229,27 @@ const Countries: FunctionComponent<CountriesProps> = (props): JSX.Element => {
     }: CountriesProps = props
     
     const [input, setInput] = useState<string>('')
+    const [highlightedListItem, setHighlightedListItem] = useState<number>(-1)
     const [showList, setShowList] = useState<boolean>(false)
-    const [filteredCountries, setFilteredCountries] = useState<string[]>()
+    const [filteredCountries, setFilteredCountries] = useState<{ name: string, index: number }[]>()
 
     useEffect(() => {
         if ((!!input.length)) {
             const newFilteredCountries: string[] = countries.filter(country => country.toLowerCase().includes(input.toLowerCase())) 
-            setFilteredCountries(newFilteredCountries)
+            setFilteredCountries(newFilteredCountries.map((country, index) => ({
+                name: country, index: index
+            })))
         } else {
             setFilteredCountries([])
         }
+        setHighlightedListItem(-1)
     }, [input])
+
+    useEffect(() => {
+        if (!!filteredCountries?.length && !showList) {
+            setShowList(true)
+        }
+    }, [filteredCountries])
 
     const clickHandler = (name: string) => {
         const elem = document.getElementById(name)
@@ -252,24 +260,50 @@ const Countries: FunctionComponent<CountriesProps> = (props): JSX.Element => {
                 behavior: 'smooth'
             })
             setHighlight(name)
+            setShowList(false)
         }
     }
+
+    const mouseInHandler = (index: number) => {
+        if (index !== highlightedListItem) setHighlightedListItem(index)
+    }
     
+    const keyHandler = (e: React.KeyboardEvent<HTMLDivElement>) => {
+        if (!!filteredCountries?.length) {
+            switch (e.key) {
+                case 'ArrowDown':
+                    e.preventDefault()
+                    if (highlightedListItem < filteredCountries.length - 1) setHighlightedListItem(highlightedListItem + 1)
+                    break;
+                
+                case 'ArrowUp':
+                    e.preventDefault()
+                    if (highlightedListItem > -1) setHighlightedListItem(highlightedListItem - 1)
+                    break;
+
+                case 'Enter':
+                    clickHandler(filteredCountries[highlightedListItem].name)
+    
+            }
+        }
+    }
+
     return (
         <CountriesWrapper>
-            <SearchWrapper>
+            <SearchWrapper onKeyDown={keyHandler}>
                 <Input 
                     value={input}
                     name="country"
                     type="text"
                     placeholder="country"
+                    focus={() => setShowList(true)}
                     change={(e) => setInput(e.target.value)}
                     clear={() => setInput('')}
                 />
-                { !!filteredCountries &&
+                { showList && !!filteredCountries?.length &&
                     <SearchList>
-                        { filteredCountries.map(country => (
-                            <ListItem key={country} onClick={() => clickHandler(country)} >{country}</ListItem>
+                        { filteredCountries.map((country, index) => (
+                            <ListItem key={country.name} highlight={highlightedListItem === country.index} onMouseEnter={() => mouseInHandler(index)} onClick={() => clickHandler(country.name)}>{country.name}</ListItem>
                         ))}
                     </SearchList>
                 }

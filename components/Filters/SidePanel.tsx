@@ -87,7 +87,7 @@ const SidePanel: FunctionComponent<TSidePanelProps> = (props): JSX.Element => {
 }
 
 const NameFilterWrapper = styled(FlexColumnCenterDiv)`
-    align-items: flex-start;
+    align-items: center;
     width: 100%;
 `
 

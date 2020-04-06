@@ -183,10 +183,9 @@ const CountriesWrapper = styled(FlexColumnCenterDiv)`
 `
 
 const SearchWrapper = styled(FlexRowCenterDiv)`
-    width: 100%;
-    max-width: 300px;
+    width: 250px;
     position: relative;
-    justify-content: flex-end;
+    justify-content: center;
 `
 
 const SearchList = styled(FlexColumnCenterDiv)`
@@ -283,6 +282,11 @@ const Countries: FunctionComponent<CountriesProps> = (props): JSX.Element => {
 
                 case 'Enter':
                     clickHandler(filteredCountries[highlightedListItem].name)
+                    break;
+
+                case 'Escape':
+                    setShowList(false)
+                    break;
     
             }
         }
@@ -296,6 +300,7 @@ const Countries: FunctionComponent<CountriesProps> = (props): JSX.Element => {
                     name="country"
                     type="text"
                     placeholder="country"
+                    click={() => setShowList(true)}
                     focus={() => setShowList(true)}
                     change={(e) => setInput(e.target.value)}
                     clear={() => setInput('')}

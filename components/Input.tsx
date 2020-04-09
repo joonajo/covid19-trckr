@@ -11,14 +11,22 @@ const InputWrapper = styled(FlexRowCenterDiv)`
 const InputElem = styled.input`
     width: 100%;
     padding: 10px 10px;
-    border: 1px solid gainsboro;
+    border: 1px solid whitesmoke;
+    transition: all .2s;
+    background: white;
 
     &::placeholder {
         color: gray;
         font-size: .7rem;
     }
-`
 
+    &:focus {
+        border: 1px solid gainsboro;
+        outline: none;
+        box-shadow: 0 0 10px -5px gainsboro;
+    }
+`
+    
 const ClearButton = styled.p<{ show: boolean }>`
     position: absolute;
     padding: 5px;

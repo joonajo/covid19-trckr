@@ -198,6 +198,8 @@ const CountrySelector: FunctionComponent<TCountrySelectorProps> = React.memo((pr
 const CountryItemWrapper = styled(FlexRowCenterDiv)`
     justify-content: space-between;
     width: 100%;
+    min-height: 30px;
+    flex-shrink: 0;
     padding: 5px 20px;
     border-top: 1px solid gainsboro;
     cursor: pointer;

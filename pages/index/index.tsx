@@ -14,6 +14,7 @@ import { TFormattedData, TRawData, FormattedData, TTotals, TEditedFullData } fro
 import { fadein } from '../../keyframes/keyframes'
 import Input from '../../components/Input'
 import BackToTopButton from '../../components/BackToTopButton'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const AppWrapper = styled(FlexColumnCenterDiv)`
     position: relative;
@@ -200,16 +201,35 @@ const SearchList = styled(FlexColumnCenterDiv)`
     box-shadow: 0 0 20px gainsboro;
     max-height: 300px;
     overflow-y: auto;
+    cursor: pointer;
 `
 
-const ListItem = styled.p<{ highlight: boolean }>`
+const ListItem = styled.div`
     padding: 10px;
-    color: ${props => props.highlight ? 'blue' : 'dimgray' };
-    background: ${props => props.highlight ? 'gainsboro' : 'white' };
     text-transform: uppercase;
-    cursor: pointer;
     width: 100%;
     transition: all var(--transition-time);
+
+    &:hover {
+        color: blue;
+        background: gainsboro;
+    }
+`
+
+const ListTop = styled(ListItem)`
+    display: flex;
+    flex-flow: row;
+    justify-content: flex-end;
+    align-items: center;
+
+    svg {
+        margin: 4px;
+    }
+`
+
+const ListCountryItem = styled(ListItem)<{ highlight: boolean }>`
+    color: ${props => props.highlight ? 'blue' : 'dimgray' };
+    background: ${props => props.highlight ? 'gainsboro' : 'white' };
 `
 
 type CountriesProps = {
@@ -307,8 +327,12 @@ const Countries: FunctionComponent<CountriesProps> = (props): JSX.Element => {
                 />
                 { showList && !!filteredCountries?.length &&
                     <SearchList>
+                        <ListTop onClick={() => setShowList(false)}>
+                            Close
+                            <FontAwesomeIcon icon={'times'} size="lg" />
+                        </ListTop>
                         { filteredCountries.map((country, index) => (
-                            <ListItem key={country.name} highlight={highlightedListItem === country.index} onMouseEnter={() => mouseInHandler(index)} onClick={() => clickHandler(country.name)}>{country.name}</ListItem>
+                            <ListCountryItem key={country.name} highlight={highlightedListItem === country.index} onMouseEnter={() => mouseInHandler(index)} onClick={() => clickHandler(country.name)}>{country.name}</ListCountryItem>
                         ))}
                     </SearchList>
                 }

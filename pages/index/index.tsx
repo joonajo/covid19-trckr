@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FunctionComponent } from 'react'
+import React, { useState, useEffect, FunctionComponent, useRef } from 'react'
 import { connect, ConnectedProps } from 'react-redux'
 
 import { NextPage } from 'next'
@@ -185,8 +185,15 @@ const CountriesWrapper = styled(FlexColumnCenterDiv)`
 
 const SearchWrapper = styled(FlexRowCenterDiv)`
     width: 250px;
+    padding-top: 100px;
     position: relative;
     justify-content: center;
+    z-index: 20;
+`
+
+const InputWrapper = styled(FlexRowCenterDiv)<{ fixed: boolean }>`
+    position: ${props => props.fixed ? 'fixed' : 'absolute'};
+    top: 0;
 `
 
 const SearchList = styled(FlexColumnCenterDiv)`
@@ -252,6 +259,27 @@ const Countries: FunctionComponent<CountriesProps> = (props): JSX.Element => {
     const [showList, setShowList] = useState<boolean>(false)
     const [filteredCountries, setFilteredCountries] = useState<{ name: string, index: number }[]>()
 
+    const inputRef: React.RefObject<HTMLDivElement> = useRef(null)
+    const [useFixedInput, setUseFixedInput] = useState<boolean>(false)
+    const [initialInputPos, setInitialInputPos] = useState<number>()
+
+    const scrollHandler = () => {
+        if (inputRef.current && initialInputPos) {
+            const newUseFixedInput: boolean = window.pageYOffset > initialInputPos
+            if (newUseFixedInput !== useFixedInput) setUseFixedInput(newUseFixedInput)
+        }
+    }
+
+    useEffect(() => {
+        window.addEventListener('scroll', scrollHandler, true)
+
+        return () => window.removeEventListener('scroll', scrollHandler, true)
+    }, [useFixedInput, initialInputPos, inputRef])
+
+    useEffect(() => {
+        if (!initialInputPos && inputRef.current) setInitialInputPos(inputRef.current?.getBoundingClientRect().top)
+    }, [inputRef])
+
     useEffect(() => {
         if ((!!input.length)) {
             const newFilteredCountries: string[] = countries.filter(country => country.toLowerCase().includes(input.toLowerCase())) 
@@ -315,16 +343,18 @@ const Countries: FunctionComponent<CountriesProps> = (props): JSX.Element => {
     return (
         <CountriesWrapper>
             <SearchWrapper onKeyDown={keyHandler}>
-                <Input 
-                    value={input}
-                    name="country"
-                    type="text"
-                    placeholder="country"
-                    click={() => setShowList(true)}
-                    focus={() => setShowList(true)}
-                    change={(e) => setInput(e.target.value)}
-                    clear={() => setInput('')}
-                />
+                <InputWrapper ref={inputRef} fixed={useFixedInput}>
+                    <Input 
+                        value={input}
+                        name="country"
+                        type="text"
+                        placeholder="country"
+                        click={() => setShowList(true)}
+                        focus={() => setShowList(true)}
+                        change={(e) => setInput(e.target.value)}
+                        clear={() => setInput('')}
+                    />
+                </InputWrapper>
                 { showList && !!filteredCountries?.length &&
                     <SearchList>
                         <ListTop onClick={() => setShowList(false)}>

@@ -5,6 +5,7 @@ import { FlexRowCenterDiv } from './CommonComponents'
 
 const InputWrapper = styled(FlexRowCenterDiv)`
     width: 250px;
+    height: 100px;
     position: relative;
 `
 

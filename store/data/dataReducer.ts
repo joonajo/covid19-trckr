@@ -7,11 +7,9 @@ export type TDataState = {
     countries?: string[]
     totals?: TTotals
     highlightedCountry?: string
-    nameFilter: string
 }
 
 const defaultDataState: TDataState = {
-    nameFilter: ''
 }
 
 const setData = (state: TDataState, action: TActions): TDataState => {
@@ -22,16 +20,6 @@ const setData = (state: TDataState, action: TActions): TDataState => {
             rawData: action.payload.raw,
             editedData: action.payload.edited,
             countries: countries,
-        }
-    }
-    return { ...state }
-}
-
-const filterByName = (state: TDataState, action: TActions): TDataState => {
-    if (action.type === actionTypes.SET_NAME_FILTER) {
-        return {
-            ...state,
-            nameFilter: action.payload,
         }
     }
     return { ...state }
@@ -87,9 +75,6 @@ export const dataReducer = (state: TDataState = defaultDataState, action: TActio
     switch (action.type) {
         case actionTypes.SET_DATA:
             return setData(state, action)
-    
-        case actionTypes.SET_NAME_FILTER:
-            return filterByName(state, action)
 
         case actionTypes.SET_TOTALS_ALL:
             return { ...state, totals: action.payload }

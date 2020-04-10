@@ -10,11 +10,10 @@ import SidePanel from '../../components/Filters/SidePanel'
 import { TReduxState, TReduxDispatch } from '../../store/store'
 import actionCreators from '../../store/actionCreators'
 import { reformatResponseData, getTotals, addShowProperty } from '../../utils/utils'
-import { TFormattedData, TRawData, FormattedData, TTotals, TEditedFullData } from '../../types/types'
+import { TFormattedData, TRawData, FormattedData, TTotals, TEditedFullData, ListCountryT } from '../../types/types'
 import { fadein } from '../../keyframes/keyframes'
 import Input from '../../components/Input'
 import BackToTopButton from '../../components/BackToTopButton'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import SearchList from '../../components/SearchList'
 
 /*
@@ -237,7 +236,7 @@ const Countries: FunctionComponent<CountriesProps> = (props): JSX.Element => {
     const [input, setInput] = useState<string>('')
     const [highlightedListItem, setHighlightedListItem] = useState<number>(-1)
     const [showList, setShowList] = useState<boolean>(false)
-    const [filteredCountries, setFilteredCountries] = useState<{ name: string, index: number }[]>()
+    const [filteredCountries, setFilteredCountries] = useState<ListCountryT[]>()
 
     const inputRef: React.RefObject<HTMLDivElement> = useRef(null)
     const [useFixedInput, setUseFixedInput] = useState<boolean>(false)

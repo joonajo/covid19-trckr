@@ -30,3 +30,10 @@ export type TRawData = {
 }
 
 export type TTotals = Pick<TDateData, 'confirmed' | 'deaths'>
+
+export const ListCountry = t.type({
+    name: t.string,
+    index: t.number
+})
+
+export type ListCountryT = t.TypeOf<typeof ListCountry>

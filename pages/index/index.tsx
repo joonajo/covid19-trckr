@@ -16,6 +16,13 @@ import Input from '../../components/Input'
 import BackToTopButton from '../../components/BackToTopButton'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
+/*
+    top "padding" when scrolling to an item
+    0 = item is at the very top
+*/
+
+const SCROLL_TOP_PADDING: number = 300 
+
 const AppWrapper = styled(FlexColumnCenterDiv)`
     position: relative;
     justify-content: flex-start;
@@ -84,7 +91,7 @@ const App: NextPage<TAppProps> = (props): JSX.Element => {
     useEffect(() => {
         document.title = "COVID-19 Trckr"
 
-        window.scrollTo(0, 0)
+        window.scroll(0, 0)
     }, [])
 
     useEffect(() => {
@@ -196,12 +203,15 @@ const CountriesWrapper = styled(FlexColumnCenterDiv)`
 `
 
 const SearchWrapper = styled(FlexRowCenterDiv)<{ fixed: boolean }>`
-    width: 250px;
+    min-width: 250px;
     position: ${props => props.fixed ? 'fixed' : 'absolute' };
     box-shadow: ${props => props.fixed ? '0 0 20px 0 gainsboro' : null };
+    padding: ${props => props.fixed ? '20px' : '0'};
+    background: snow;
     top: 0;
     justify-content: center;
     z-index: 10;
+    transition: all var(--transition-time);
 `
 
 const InputWrapper = styled(FlexRowCenterDiv)`
@@ -315,9 +325,10 @@ const Countries: FunctionComponent<CountriesProps> = (props): JSX.Element => {
     const clickHandler = (name: string) => {
         const elem = document.getElementById(name)
         if (elem) {
-            const y: number = elem.getBoundingClientRect().top - 200
+            const itemPos: number = window.pageYOffset + elem.getBoundingClientRect().top - SCROLL_TOP_PADDING
+            console.log(itemPos)
             window.scrollTo({
-                top: y,
+                top: itemPos,
                 behavior: 'smooth'
             })
             setHighlight(name)

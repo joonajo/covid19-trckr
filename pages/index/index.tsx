@@ -84,6 +84,11 @@ const App: NextPage<TAppProps> = (props): JSX.Element => {
     useEffect(() => {
         document.title = "COVID-19 Trckr"
 
+        window.scrollTo(0, 0)
+    }, [])
+
+    useEffect(() => {
+
         fetch("https://pomber.github.io/covid19/timeseries.json")
             .then(response => response.json())
             .then((data: TRawData) => {
@@ -181,18 +186,26 @@ const GlobalTotals: FunctionComponent<TGlobalTotalsProps> = (props): JSX.Element
 }
 
 const CountriesWrapper = styled(FlexColumnCenterDiv)`
-`
-
-const SearchWrapper = styled(FlexRowCenterDiv)`
-    width: 250px;
-    padding-top: 100px;
     position: relative;
-    justify-content: center;
-    z-index: 20;
+
+    &::before {
+        content: "";
+        height: 50px;
+        position: relative;
+    }
 `
 
-const InputWrapper = styled(FlexRowCenterDiv)<{ fixed: boolean }>`
-    position: ${props => props.fixed ? 'fixed' : 'absolute'};
+const SearchWrapper = styled(FlexRowCenterDiv)<{ fixed: boolean }>`
+    width: 250px;
+    position: ${props => props.fixed ? 'fixed' : 'absolute' };
+    box-shadow: ${props => props.fixed ? '0 0 20px 0 gainsboro' : null };
+    top: 0;
+    justify-content: center;
+    z-index: 10;
+`
+
+const InputWrapper = styled(FlexRowCenterDiv)`
+    position: relative;
     top: 0;
 `
 
@@ -228,9 +241,10 @@ const ListTop = styled(ListItem)`
     flex-flow: row;
     justify-content: flex-end;
     align-items: center;
+    color: dimgray;
 
     svg {
-        margin: 4px;
+        margin: 0 4px;
     }
 `
 
@@ -342,8 +356,8 @@ const Countries: FunctionComponent<CountriesProps> = (props): JSX.Element => {
 
     return (
         <CountriesWrapper>
-            <SearchWrapper onKeyDown={keyHandler}>
-                <InputWrapper ref={inputRef} fixed={useFixedInput}>
+            <SearchWrapper onKeyDown={keyHandler} fixed={useFixedInput}>
+                <InputWrapper ref={inputRef}>
                     <Input 
                         value={input}
                         name="country"

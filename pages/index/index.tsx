@@ -15,9 +15,10 @@ import { fadein } from '../../keyframes/keyframes'
 import Input from '../../components/Input'
 import BackToTopButton from '../../components/BackToTopButton'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import SearchList from '../../components/SearchList'
 
 /*
-    top "padding" when scrolling to an item
+    top "padding/margin" when scrolling to an item
     0 = item is at the very top
 */
 
@@ -95,7 +96,6 @@ const App: NextPage<TAppProps> = (props): JSX.Element => {
     }, [])
 
     useEffect(() => {
-
         fetch("https://pomber.github.io/covid19/timeseries.json")
             .then(response => response.json())
             .then((data: TRawData) => {
@@ -219,50 +219,6 @@ const InputWrapper = styled(FlexRowCenterDiv)`
     top: 0;
 `
 
-const SearchList = styled(FlexColumnCenterDiv)`
-    justify-content: flex-start;
-    position: absolute;
-    font-size: .8rem;
-    width: 100%;
-    top: 100%;
-    left: 0;
-    z-index: 5;
-    background: white;
-    box-shadow: 0 0 20px gainsboro;
-    max-height: 300px;
-    overflow-y: auto;
-    cursor: pointer;
-`
-
-const ListItem = styled.div`
-    padding: 10px;
-    text-transform: uppercase;
-    width: 100%;
-    transition: all var(--transition-time);
-
-    &:hover {
-        color: blue;
-        background: gainsboro;
-    }
-`
-
-const ListTop = styled(ListItem)`
-    display: flex;
-    flex-flow: row;
-    justify-content: flex-end;
-    align-items: center;
-    color: dimgray;
-
-    svg {
-        margin: 0 4px;
-    }
-`
-
-const ListCountryItem = styled(ListItem)<{ highlight: boolean }>`
-    color: ${props => props.highlight ? 'blue' : 'dimgray' };
-    background: ${props => props.highlight ? 'gainsboro' : 'white' };
-`
-
 type CountriesProps = {
     data: TEditedFullData
     countries: string[]
@@ -326,7 +282,6 @@ const Countries: FunctionComponent<CountriesProps> = (props): JSX.Element => {
         const elem = document.getElementById(name)
         if (elem) {
             const itemPos: number = window.pageYOffset + elem.getBoundingClientRect().top - SCROLL_TOP_PADDING
-            console.log(itemPos)
             window.scrollTo({
                 top: itemPos,
                 behavior: 'smooth'
@@ -354,7 +309,9 @@ const Countries: FunctionComponent<CountriesProps> = (props): JSX.Element => {
                     break;
 
                 case 'Enter':
-                    clickHandler(filteredCountries[highlightedListItem].name)
+                    if (highlightedListItem !== -1) {
+                        clickHandler(filteredCountries[highlightedListItem].name)
+                    }
                     break;
 
                 case 'Escape':
@@ -381,15 +338,13 @@ const Countries: FunctionComponent<CountriesProps> = (props): JSX.Element => {
                     />
                 </InputWrapper>
                 { showList && !!filteredCountries?.length &&
-                    <SearchList>
-                        <ListTop onClick={() => setShowList(false)}>
-                            Close
-                            <FontAwesomeIcon icon={'times'} size="lg" />
-                        </ListTop>
-                        { filteredCountries.map((country, index) => (
-                            <ListCountryItem key={country.name} highlight={highlightedListItem === country.index} onMouseEnter={() => mouseInHandler(index)} onClick={() => clickHandler(country.name)}>{country.name}</ListCountryItem>
-                        ))}
-                    </SearchList>
+                    <SearchList
+                        highlightedListItem={highlightedListItem}
+                        filteredCountries={filteredCountries}
+                        setShowList={setShowList}
+                        mouseInHandler={mouseInHandler}
+                        clickHandler={clickHandler}
+                    />
                 }
             </SearchWrapper>
             <ContentWrapper flex='row wrap'>

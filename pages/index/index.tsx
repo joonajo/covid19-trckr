@@ -87,6 +87,8 @@ const App: NextPage<TAppProps> = (props): JSX.Element => {
         highlightCountry
     }: TAppProps = props
 
+    console.log('test branch')
+
     const [error, setError] = useState<boolean>(false)
 
     useEffect(() => {

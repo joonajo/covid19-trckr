@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FC } from 'react'
+import React, { useState, useEffect, FC, useCallback } from 'react'
 import styled from 'styled-components'
 import { connect, ConnectedProps } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -63,11 +63,7 @@ const SidePanel: FC<TSidePanelProps> = (props): JSX.Element => {
     const [filterInput, setFilterInput] = useState<string>('')
     const [filteredCountries, setFilteredCountries] = useState<TEditedFullData>()
 
-    useEffect(() => {
-        if (!!data) setFilteredCountries(data)
-    }, [data])
-
-    useEffect(() => {
+    useEffect(() => { 
         if (!!data) {
             const newFilteredCountries: TEditedFullData = {}
             
@@ -78,10 +74,10 @@ const SidePanel: FC<TSidePanelProps> = (props): JSX.Element => {
                     }
                 }
             }
-
+    
             setFilteredCountries(newFilteredCountries)
         }
-    }, [filterInput])
+    }, [data, filterInput])
     
     const toggleHandler = () => {
         setOpen(!open)

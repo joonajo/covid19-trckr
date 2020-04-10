@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { FlexColumnCenterDiv } from './CommonComponents'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { ListCountryT } from '../types/types'
 
 const SearchListWrapper = styled(FlexColumnCenterDiv)`
     justify-content: flex-start;
@@ -47,14 +48,9 @@ const ListCountryItem = styled(ListItem)<{ highlight: boolean }>`
     background: ${props => props.highlight ? 'gainsboro' : 'white' };
 `
 
-export type FilteredCountryT = {
-    name: string
-    index: number
-}
-
 type Props = {
     highlightedListItem: number
-    filteredCountries: FilteredCountryT[] 
+    filteredCountries: ListCountryT[] 
     setShowList: (val: boolean) => void
     mouseInHandler: (val: number) => void
     clickHandler: (val: string) => void
@@ -67,8 +63,6 @@ const SearchList: React.FC<Props> = ({
     mouseInHandler,
     clickHandler,
 }): JSX.Element => {
-
-
 
     return (
         <SearchListWrapper>

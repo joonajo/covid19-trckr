@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FunctionComponent } from 'react'
+import React, { useState, useEffect, FC } from 'react'
 import styled from 'styled-components'
 import { connect, ConnectedProps } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -9,7 +9,7 @@ import Toggle from './Toggle'
 
 import { TReduxState, TReduxDispatch } from '../../store/store'
 import actionCreators from '../../store/actionCreators'
-import { TEditedFullData } from '../../types/types'
+import { TEditedFullData, ListCountryT } from '../../types/types'
 import Input from '../Input'
 
 const Wrapper = styled(FlexColumnCenterDiv)<{ open: boolean }>`
@@ -38,11 +38,9 @@ const FilterTitle = styled.p`
 
 const StateProps = (state: TReduxState) => ({
     data: state.data.editedData,
-    nameFilter: state.data.nameFilter,
 })
 
 const DispatchProps = (dispatch: TReduxDispatch) => ({
-    setNameFilter: (name: string) => dispatch(actionCreators.setNameFilter(name)),
     selectAllCountries: () => dispatch(actionCreators.selectAllCountries()),
     clearAllCountries: () => dispatch(actionCreators.clearAllCountries()),
     toggleCountry: (country: string) => dispatch(actionCreators.toggleCountrySelection(country))
@@ -53,31 +51,60 @@ type TReduxProps = ConnectedProps<typeof connector>
 
 type TSidePanelProps = TReduxProps & {}
 
-const SidePanel: FunctionComponent<TSidePanelProps> = (props): JSX.Element => {
+const SidePanel: FC<TSidePanelProps> = (props): JSX.Element => {
     const { 
         data,
-        nameFilter,
-        setNameFilter, 
         selectAllCountries, 
         clearAllCountries,
         toggleCountry 
     }: TSidePanelProps = props
     
     const [open, setOpen] = useState<boolean>(false)
+    const [filterInput, setFilterInput] = useState<string>('')
+    const [filteredCountries, setFilteredCountries] = useState<TEditedFullData>()
 
+    useEffect(() => {
+        if (!!data) setFilteredCountries(data)
+    }, [data])
+
+    useEffect(() => {
+        if (!!data) {
+            const newFilteredCountries: TEditedFullData = {}
+            
+            for (let key in data) {
+                if (key.toLowerCase().includes(filterInput.toLowerCase())) {
+                    newFilteredCountries[key] = {
+                        ...data[key]
+                    }
+                }
+            }
+
+            setFilteredCountries(newFilteredCountries)
+        }
+    }, [filterInput])
+    
     const toggleHandler = () => {
         setOpen(!open)
+    }
+
+    const inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFilterInput(e.target.value)
+    }
+
+    const clearInputHandler = () => {
+        setFilterInput('')
     }
 
     return (
         <Wrapper open={open}>
             <Toggle open={open} toggle={toggleHandler} />
-            <NameFilter
-                nameFilter={nameFilter}
-                setNameFilter={setNameFilter}
+            <FilterInput
+                input={filterInput}
+                change={inputHandler}
+                clear={clearInputHandler}
             />
             <CountrySelector 
-                data={data!} 
+                data={filteredCountries}
                 toggleCountry={toggleCountry}
                 selectAll={selectAllCountries}
                 clearAll={clearAllCountries}    
@@ -86,44 +113,38 @@ const SidePanel: FunctionComponent<TSidePanelProps> = (props): JSX.Element => {
     )
 }
 
-const NameFilterWrapper = styled(FlexColumnCenterDiv)`
+const FilterInputWrapper = styled(FlexColumnCenterDiv)`
     align-items: center;
     width: 100%;
 `
 
-type TNameFilterProps = {
-    nameFilter: string
-    setNameFilter(input: string): void
+type TFilterInputProps = {
+    input: string
+    change: (e: React.ChangeEvent<HTMLInputElement>) => void
+    clear: () => void
 }
 
-const NameFilter: FunctionComponent<TNameFilterProps> = (props): JSX.Element => {
+const FilterInput: FC<TFilterInputProps> = (props): JSX.Element => {
     const { 
-        nameFilter, 
-        setNameFilter 
-    }: TNameFilterProps = props
-
-    const changeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setNameFilter(e.target.value)
-    }
-
-    const clearHandler = () => {
-        setNameFilter('')
-    }
+        input, 
+        change,
+        clear
+    }: TFilterInputProps = props
 
     return (
-        <NameFilterWrapper>
+        <FilterInputWrapper>
             <FilterTitle>
                 Country Search
             </FilterTitle>
             <Input 
-                value={nameFilter}
+                value={input}
                 name="country"
                 type="text"
                 placeholder="country"
-                change={changeHandler}
-                clear={clearHandler}
+                change={change}
+                clear={clear}
             />
-        </NameFilterWrapper>
+        </FilterInputWrapper>
     )
 }
 
@@ -162,14 +183,19 @@ const ListWrapper = styled(SelectorWrapper)`
 
 
 type TCountrySelectorProps = {
-    data: TEditedFullData,
+    data?: TEditedFullData
     selectAll(): void
     clearAll(): void
     toggleCountry(country: string): void
 }
 
-const CountrySelector: FunctionComponent<TCountrySelectorProps> = React.memo((props): JSX.Element => {
-    const { data, selectAll, clearAll, toggleCountry }: TCountrySelectorProps = props
+const CountrySelector: FC<TCountrySelectorProps> = React.memo((props): JSX.Element => {
+    const { 
+        data, 
+        selectAll, 
+        clearAll, 
+        toggleCountry 
+    }: TCountrySelectorProps = props
 
     return (
         <SelectorWrapper>
@@ -182,7 +208,7 @@ const CountrySelector: FunctionComponent<TCountrySelectorProps> = React.memo((pr
                 </Button>
             </ButtonsWrapper>
             <ListWrapper>
-                { Object.keys(data).map((key: string) => (
+                { !!data && Object.keys(data).map((key: string) => (
                     <CountryItem 
                         key={key} 
                         name={key} 
@@ -232,7 +258,7 @@ type TCountryItemProps = {
     toggle(name: string): void
 }
 
-const CountryItem: FunctionComponent<TCountryItemProps> = (props): JSX.Element => {
+const CountryItem: FC<TCountryItemProps> = React.memo((props): JSX.Element => {
     const { name, show, toggle }: TCountryItemProps = props 
     
     const clickHandler = () => {
@@ -247,6 +273,6 @@ const CountryItem: FunctionComponent<TCountryItemProps> = (props): JSX.Element =
             </CheckWrapper>
         </CountryItemWrapper>
     )
-}
+})
 
 export default connector(SidePanel)

@@ -8,9 +8,11 @@ import { formatNumber } from '../utils/utils'
 const Wrapper = styled(FlexColumnCenterDiv)<{ show: boolean, highlight: boolean }>`
     margin: 10px;
     overflow: hidden;
+    border-radius: var(--border-radius);
     justify-content: space-between;
     min-height: 100px;
-    align-items: flex-start;
+    align-items: flex-end;
+    text-align: right;
     background: white;
     box-shadow: 0 0 20px 0 gainsboro;
     cursor: default;
@@ -78,6 +80,7 @@ const DataCardWrapper = styled(FlexColumnCenterDiv)`
     padding: 5px 10px;
     margin: 5px;
     background: whitesmoke;
+    border-radius: var(--border-radius);
 `
 
 const DataCardTitle = styled.p`

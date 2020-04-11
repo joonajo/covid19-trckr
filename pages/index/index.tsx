@@ -3,7 +3,7 @@ import { connect, ConnectedProps } from 'react-redux'
 
 import { NextPage } from 'next'
 import styled from 'styled-components'
-import CountryCard from '../../components/CountryCard'
+import CountryCard, { DataCard } from '../../components/CountryCard'
 import { FlexColumnCenterDiv, FlexRowCenterDiv } from '../../components/CommonComponents'
 import Loading from '../../components/Loading/Loading'
 import SidePanel from '../../components/Filters/SidePanel'
@@ -147,11 +147,13 @@ const TotalsWrapper = styled(ContentWrapper)`
     cursor: default;
     background: white;
     box-shadow: 0 0 20px 0 gainsboro;
+    border-radius: var(--border-radius);
 `
 
 const DataCardWrapper = styled(FlexColumnCenterDiv)`
     padding: 10px;
     margin: 10px;
+    border-radius: var(--border-radius);
     background: whitesmoke;
 `
 

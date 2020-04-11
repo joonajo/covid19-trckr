@@ -14,6 +14,7 @@ const InputElem = styled.input`
     border: 1px solid whitesmoke;
     transition: all .2s;
     background: white;
+    border-radius: var(--border-radius);
 
     &::placeholder {
         color: gray;

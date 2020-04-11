@@ -1,5 +1,6 @@
 :root {
     --transition-time: .2s;
+    --border-radius: 5px;
 }
 
 html {

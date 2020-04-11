@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { FlexColumnCenterDiv, FlexRowCenterDiv } from './CommonComponents'
 import { fadein } from '../keyframes/keyframes'
 import { TDateData } from '../types/types'
+import { formatNumber } from '../utils/utils'
 
 const Wrapper = styled(FlexColumnCenterDiv)<{ show: boolean, highlight: boolean }>`
     margin: 10px;
@@ -61,12 +62,12 @@ const CountryCard: React.FunctionComponent<Props> = React.memo((props): JSX.Elem
             <Data>
                 <DataCard
                     title='cases'
-                    text={latestData.confirmed}
+                    number={latestData.confirmed}
                 />
                 <DataCard
                     title='deaths'
                     color='crimson'
-                    text={latestData.deaths}
+                    number={latestData.deaths}
                 />
             </Data>
         </Wrapper>
@@ -74,7 +75,7 @@ const CountryCard: React.FunctionComponent<Props> = React.memo((props): JSX.Elem
 })
 
 const DataCardWrapper = styled(FlexColumnCenterDiv)`
-    padding: 5px;
+    padding: 5px 10px;
     margin: 5px;
     background: whitesmoke;
 `
@@ -83,7 +84,7 @@ const DataCardTitle = styled.p`
     text-transform: uppercase;
     font-size: .5rem;
     color: black;
-    padding: 5px;
+    padding-bottom: 5px;
 `
 
 const DataCardText = styled.p<{ color: string }>`
@@ -95,16 +96,16 @@ const DataCardText = styled.p<{ color: string }>`
 
 type TDataCardProps = {
     title: string
-    text: string | number
+    number:  number
     color?: string
 }
 
 export const DataCard: React.FunctionComponent<TDataCardProps> = (props): JSX.Element => {
-    const { title, color = 'navy', text }: TDataCardProps = props
+    const { title, color = 'navy', number }: TDataCardProps = props
     return (
         <DataCardWrapper>
             <DataCardTitle>{title}</DataCardTitle>
-            <DataCardText color={color}>{text}</DataCardText>
+            <DataCardText color={color}>{formatNumber(number)}</DataCardText>
         </DataCardWrapper>
     )
 } 

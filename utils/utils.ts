@@ -36,3 +36,17 @@ export const getTotals = (data: TFormattedData): TTotals => {
         deaths: totalDeaths
     }
 }
+
+export const formatNumber = (num: number): string => {
+    const chars: string[] = []
+    for (let char of String(num)) {
+        chars.push(char)
+    }
+
+    const formatted: string = chars.reverse()
+                                .map((ch, index) => index % 3 === 0 ? `${ch} ` : ch)
+                                .reverse()
+                                .join('')
+
+    return formatted
+}

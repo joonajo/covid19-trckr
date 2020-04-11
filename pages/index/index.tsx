@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FunctionComponent, useRef } from 'react'
+import React, { useState, useEffect, FC, useRef } from 'react'
 import { connect, ConnectedProps } from 'react-redux'
 
 import { NextPage } from 'next'
@@ -9,7 +9,7 @@ import Loading from '../../components/Loading/Loading'
 import SidePanel from '../../components/Filters/SidePanel'
 import { TReduxState, TReduxDispatch } from '../../store/store'
 import actionCreators from '../../store/actionCreators'
-import { reformatResponseData, getTotals, addShowProperty } from '../../utils/utils'
+import { reformatResponseData, getTotals, addShowProperty, formatNumber } from '../../utils/utils'
 import { TFormattedData, TRawData, FormattedData, TTotals, TEditedFullData, ListCountryT } from '../../types/types'
 import { fadein } from '../../keyframes/keyframes'
 import Input from '../../components/Input'
@@ -172,7 +172,7 @@ type TGlobalTotalsProps = TTotals & {
 
 }
 
-const GlobalTotals: FunctionComponent<TGlobalTotalsProps> = (props): JSX.Element => {
+const GlobalTotals: FC<TGlobalTotalsProps> = (props): JSX.Element => {
     const { confirmed, deaths }: TGlobalTotalsProps = props
     return (
         <TotalsWrapper flex='column'>
@@ -180,11 +180,11 @@ const GlobalTotals: FunctionComponent<TGlobalTotalsProps> = (props): JSX.Element
             <ContentWrapper flex="row">
                 <DataCardWrapper>
                     <DataCardTitle>cases</DataCardTitle>
-                    <DataCardText color='navy'>{confirmed}</DataCardText>
+                    <DataCardText color='navy'>{formatNumber(confirmed)}</DataCardText>
                 </DataCardWrapper>
                 <DataCardWrapper>
                     <DataCardTitle>deaths</DataCardTitle>
-                    <DataCardText color='crimson'>{deaths}</DataCardText>
+                    <DataCardText color='crimson'>{formatNumber(deaths)}</DataCardText>
                 </DataCardWrapper>
             </ContentWrapper>
         </TotalsWrapper>
@@ -225,7 +225,7 @@ type CountriesProps = {
     setHighlight(country: string): void
 }
 
-const Countries: FunctionComponent<CountriesProps> = (props): JSX.Element => {
+const Countries: FC<CountriesProps> = (props): JSX.Element => {
     const {
         data,
         countries,

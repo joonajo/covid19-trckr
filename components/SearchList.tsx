@@ -49,7 +49,7 @@ const ListCountryItem = styled(ListItem)<{ highlight: boolean }>`
 `
 
 type Props = {
-    highlightedListItem: number
+    highlightedIndex: number
     filteredCountries: ListCountryT[] 
     setShowList: (val: boolean) => void
     mouseInHandler: (val: number) => void
@@ -57,7 +57,7 @@ type Props = {
 }
 
 const SearchList: React.FC<Props> = ({
-    highlightedListItem,
+    highlightedIndex,
     filteredCountries,
     setShowList,
     mouseInHandler,
@@ -71,7 +71,7 @@ const SearchList: React.FC<Props> = ({
                 <FontAwesomeIcon icon={'times'} size="lg" />
             </ListTop>
             { filteredCountries.map((country, index) => (
-                <ListCountryItem key={country.name} highlight={highlightedListItem === country.index} onMouseEnter={() => mouseInHandler(index)} onClick={() => clickHandler(country.name)}>{country.name}</ListCountryItem>
+                <ListCountryItem key={country.name} highlight={highlightedIndex === country.index} onMouseEnter={() => mouseInHandler(index)} onClick={() => clickHandler(country.name)}>{country.name}</ListCountryItem>
             ))}
         </SearchListWrapper>
     )

@@ -234,7 +234,7 @@ const Countries: FC<CountriesProps> = (props): JSX.Element => {
     }: CountriesProps = props
     
     const [input, setInput] = useState<string>('')
-    const [highlightedListItem, setHighlightedListItem] = useState<number>(-1)
+    const [highlightedIndex, setHighlightedIndex] = useState<number>(-1)
     const [showList, setShowList] = useState<boolean>(false)
     const [filteredCountries, setFilteredCountries] = useState<ListCountryT[]>()
 
@@ -268,7 +268,7 @@ const Countries: FC<CountriesProps> = (props): JSX.Element => {
         } else {
             setFilteredCountries([])
         }
-        setHighlightedListItem(-1)
+        setHighlightedIndex(-1)
     }, [input])
 
     useEffect(() => {
@@ -291,7 +291,7 @@ const Countries: FC<CountriesProps> = (props): JSX.Element => {
     }
 
     const mouseInHandler = (index: number) => {
-        if (index !== highlightedListItem) setHighlightedListItem(index)
+        if (index !== highlightedIndex) setHighlightedIndex(index)
     }
     
     const keyHandler = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -299,17 +299,19 @@ const Countries: FC<CountriesProps> = (props): JSX.Element => {
             switch (e.key) {
                 case 'ArrowDown':
                     e.preventDefault()
-                    if (highlightedListItem < filteredCountries.length - 1) setHighlightedListItem(highlightedListItem + 1)
+                    let newHighlightedIndex: number = highlightedIndex < filteredCountries.length - 1 ? highlightedIndex + 1 : -1
+                    setHighlightedIndex(newHighlightedIndex)
                     break;
                 
                 case 'ArrowUp':
                     e.preventDefault()
-                    if (highlightedListItem > -1) setHighlightedListItem(highlightedListItem - 1)
+                    newHighlightedIndex = highlightedIndex > -1 ? highlightedIndex - 1 : filteredCountries.length - 1
+                    setHighlightedIndex(newHighlightedIndex)
                     break;
 
                 case 'Enter':
-                    if (highlightedListItem !== -1) {
-                        clickHandler(filteredCountries[highlightedListItem].name)
+                    if (highlightedIndex !== -1) {
+                        clickHandler(filteredCountries[highlightedIndex].name)
                     }
                     break;
 
@@ -338,7 +340,7 @@ const Countries: FC<CountriesProps> = (props): JSX.Element => {
                 </InputWrapper>
                 { showList && !!filteredCountries?.length &&
                     <SearchList
-                        highlightedListItem={highlightedListItem}
+                        highlightedIndex={highlightedIndex}
                         filteredCountries={filteredCountries}
                         setShowList={setShowList}
                         mouseInHandler={mouseInHandler}

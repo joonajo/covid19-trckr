@@ -4,7 +4,7 @@ import { TFormattedData, TTotals, TRawData, TEditedFullData } from '../../types/
 export type TDataActions = 
 | ({ type: dataActionTypes.SET_DATA, payload: { raw: TRawData, edited: TEditedFullData }})
 | ({ type: dataActionTypes.SET_NAME_FILTER, payload: string })
-| ({ type: dataActionTypes.SET_TOTALS_ALL, payload: TTotals })
+| ({ type: dataActionTypes.SET_TOTALS_ALL, payload: TTotals[] })
 | ({ type: dataActionTypes.SELECTED_COUNTRIES_CLEAR_ALL })
 | ({ type: dataActionTypes.SELECTED_COUNTRIES_SELECT_ALL })
 | ({ type: dataActionTypes.TOGGLE_COUNTRY_SELECTION, payload: string })
@@ -20,7 +20,7 @@ export const setNameFilter = (name: string): TDataActions => ({
     payload: name
 })
 
-export const setTotalsAll = (totals: TTotals): TDataActions => ({
+export const setTotalsAll = (totals: TTotals[]): TDataActions => ({
     type: dataActionTypes.SET_TOTALS_ALL,
     payload: totals
 })

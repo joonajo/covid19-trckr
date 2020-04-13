@@ -3,7 +3,7 @@ import { connect, ConnectedProps } from "react-redux";
 
 import { NextPage } from "next";
 import styled from "styled-components";
-import CountryCard, { DataCard } from "../../components/CountryCard";
+import CountryCard from "../../components/CountryCard";
 import {
   FlexColumnCenterDiv,
   FlexRowCenterDiv,
@@ -84,7 +84,7 @@ const mapStateToProps = (state: TReduxState) => ({
 const mapDispatchToProps = (dispatch: TReduxDispatch) => ({
   setData: (raw: TRawData, edited: TEditedFullData) =>
     dispatch(actionCreators.setData(raw, edited)),
-  setTotalsAll: (totals: TTotals) =>
+  setTotalsAll: (totals: TTotals[]) =>
     dispatch(actionCreators.setTotalsAll(totals)),
   highlightCountry: (country: string) =>
     dispatch(actionCreators.highlightCountry(country)),
@@ -145,7 +145,7 @@ const App: NextPage<TAppProps> = (props): JSX.Element => {
         <ContentWrapper flex="column">
           <AppTitle>COVID-19 TRCKR</AppTitle>
           <SidePanel />
-          <GlobalTotals {...totals} />
+          <GlobalTotals totals={totals} />
           <Countries
             data={editedData}
             countries={countries}
@@ -197,21 +197,28 @@ const DataCardText = styled.h2<{ color: string }>`
   font-family: "Roboto";
 `;
 
-type TGlobalTotalsProps = TTotals & {};
+type TGlobalTotalsProps = {
+  totals: TTotals[];
+};
 
 const GlobalTotals: FC<TGlobalTotalsProps> = (props): JSX.Element => {
-  const { confirmed, deaths }: TGlobalTotalsProps = props;
+  const { totals }: TGlobalTotalsProps = props;
+  console.log(totals);
   return (
     <TotalsWrapper flex="column">
       <TotalsTitle>Globally</TotalsTitle>
       <ContentWrapper flex="row">
         <DataCardWrapper>
           <DataCardTitle>cases</DataCardTitle>
-          <DataCardText color="navy">{formatNumber(confirmed)}</DataCardText>
+          <DataCardText color="navy">
+            {formatNumber(totals[totals.length - 1].confirmed)}
+          </DataCardText>
         </DataCardWrapper>
         <DataCardWrapper>
           <DataCardTitle>deaths</DataCardTitle>
-          <DataCardText color="crimson">{formatNumber(deaths)}</DataCardText>
+          <DataCardText color="crimson">
+            {formatNumber(totals[totals.length - 1].deaths)}
+          </DataCardText>
         </DataCardWrapper>
       </ContentWrapper>
     </TotalsWrapper>

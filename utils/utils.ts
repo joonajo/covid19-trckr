@@ -21,20 +21,19 @@ export const addShowProperty = (data: TRawData) => {
     return editedData
 }
 
-export const getTotals = (data: TFormattedData): TTotals => {
+export const getTotals = (data: TFormattedData): TTotals[] => {
     let totalCases: number = 0
     let totalDeaths: number = 0
+    const dateTotals: TTotals[] = []
 
     data.forEach((data: TCountryData) => {
         const lastData: TDateData = { ...data.dates[data.dates.length-1] }
         totalCases += lastData.confirmed
         totalDeaths += lastData.deaths
+        dateTotals.push({ confirmed: totalCases, deaths: totalDeaths })
     })
 
-    return {
-        confirmed: totalCases,
-        deaths: totalDeaths
-    }
+    return dateTotals
 }
 
 export const formatNumber = (num: number): string => {
